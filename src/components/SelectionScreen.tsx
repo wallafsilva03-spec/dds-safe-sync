@@ -1,5 +1,6 @@
 import logoMoreno from "@/assets/logo-moreno.png";
 import { DSSItem } from "@/data/dssContent";
+import GSheetConfig from "./GSheetConfig";
 
 interface SelectionScreenProps {
   dssItems: DSSItem[];
@@ -73,6 +74,11 @@ const SelectionScreen = ({ dssItems, signedIds, onSelectDSS }: SelectionScreenPr
             </button>
           );
         })}
+      </div>
+
+      {/* Google Sheets Config */}
+      <div className="w-full flex justify-center mt-4">
+        <GSheetConfig />
       </div>
 
       {/* Footer */}
