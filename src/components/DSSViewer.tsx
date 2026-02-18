@@ -3,6 +3,8 @@ import logoMoreno from "@/assets/logo-moreno.png";
 import { DSSItem } from "@/data/dssContent";
 import CountdownTimer from "./CountdownTimer";
 import SignatureCanvas from "./SignatureCanvas";
+import { sendToGoogleSheets } from "@/lib/googleSheets";
+import { toast } from "@/hooks/use-toast";
 
 interface DSSViewerProps {
   dss: DSSItem;
@@ -38,8 +40,25 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
 
   const canSubmit = timerDone && name.trim() && hasSignature && agreed;
 
-  const handleSubmit = () => {
-    if (!canSubmit) return;
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!canSubmit || isSending) return;
+    setIsSending(true);
+
+    const result = await sendToGoogleSheets({
+      dssTitle: dss.title,
+      nome: name.trim(),
+      funcao: role.trim(),
+      dataHora: new Date().toLocaleString("pt-BR"),
+      assinaturaBase64: signatureDataUrl,
+    });
+
+    if (result.error) {
+      toast({ title: "Aviso", description: result.error, variant: "destructive" });
+    }
+
+    setIsSending(false);
     setConfirmed(true);
     onSigned(dss.id);
   };
@@ -171,10 +190,10 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
 
           <button
             onClick={handleSubmit}
-            disabled={!canSubmit}
+            disabled={!canSubmit || isSending}
             className="w-full py-4 rounded-[10px] border-none bg-gradient-button text-primary-foreground font-display text-[17px] font-bold tracking-wider flex items-center justify-center gap-2 transition-all active:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            ✅ CONFIRMAR ASSINATURA
+            {isSending ? "⏳ ENVIANDO..." : "✅ CONFIRMAR ASSINATURA"}
           </button>
         </div>
       </div>
