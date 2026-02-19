@@ -68,9 +68,10 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
       try {
         const canvas = await html2canvas(confirmCardRef.current!, {
           backgroundColor: "#ffffff",
-          scale: 2,
+          scale: 4,
+          useCORS: true,
         });
-        const cardImage = canvas.toDataURL("image/jpeg", 0.9);
+        const cardImage = canvas.toDataURL("image/png");
 
         const result = await sendToGoogleSheets({
           ...pendingSubmitData,
