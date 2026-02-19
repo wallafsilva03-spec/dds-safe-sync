@@ -61,28 +61,32 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
     setConfirmed(true);
   };
 
-  // After confirmation, send data with HTML content
+  // After confirmation, send data with clean base64 + HTML comprovante
   useEffect(() => {
     if (!confirmed || !pendingSubmitData) return;
 
     const sendData = async () => {
-      const htmlContent = `
-        <div style="font-family:Arial,sans-serif;max-width:400px;border:2px solid #2e7d32;border-radius:12px;padding:24px;text-align:center;background:#fff;">
-          <div style="font-size:28px;margin-bottom:8px;">✅</div>
-          <h2 style="color:#0d3b66;font-size:18px;margin:0 0 8px;">Assinatura Registrada</h2>
-          <p style="font-size:12px;color:#444;">Colaborador: <strong style="color:#0d3b66;">${pendingSubmitData.nome}</strong></p>
-          <p style="font-size:12px;color:#444;">Função: <strong style="color:#0d3b66;">${pendingSubmitData.funcao || "—"}</strong></p>
-          <p style="font-size:12px;color:#444;">DSS: ${pendingSubmitData.dssTitle}</p>
-          <p style="font-size:12px;color:#444;">Data/Hora: ${pendingSubmitData.dataHora}</p>
-          <div style="margin:12px auto;max-width:260px;border:1px solid #ddd;border-radius:8px;padding:4px;background:#fafafa;">
-            <img src="${pendingSubmitData.assinaturaBase64}" style="width:100%;border-radius:6px;" />
-          </div>
-        </div>
-      `.trim();
+      // Clean base64: remove data URI prefix so Apps Script can decode it
+      const rawBase64 = pendingSubmitData.assinaturaBase64.includes(",")
+        ? pendingSubmitData.assinaturaBase64.split(",")[1]
+        : pendingSubmitData.assinaturaBase64;
+
+      const htmlComprovante = `
+<div style="font-family:Arial,sans-serif;max-width:400px;border:2px solid #2e7d32;border-radius:12px;padding:24px;text-align:center;background:#fff;">
+  <h2 style="color:#0d3b66;font-size:18px;margin:0 0 8px;">✅ Assinatura Registrada</h2>
+  <p style="font-size:12px;color:#444;">Colaborador: <strong style="color:#0d3b66;">${pendingSubmitData.nome}</strong></p>
+  <p style="font-size:12px;color:#444;">Função: <strong style="color:#0d3b66;">${pendingSubmitData.funcao || "—"}</strong></p>
+  <p style="font-size:12px;color:#444;">DSS: ${pendingSubmitData.dssTitle}</p>
+  <p style="font-size:12px;color:#444;">Data/Hora: ${pendingSubmitData.dataHora}</p>
+  <div style="margin:12px auto;max-width:260px;border:1px solid #ddd;border-radius:8px;padding:4px;background:#fafafa;">
+    <img src="${pendingSubmitData.assinaturaBase64}" style="width:100%;border-radius:6px;" />
+  </div>
+</div>`.trim();
 
       const result = await sendToGoogleSheets({
         ...pendingSubmitData,
-        assinaturaBase64: htmlContent,
+        assinaturaBase64: rawBase64,
+        htmlComprovante,
       });
 
       if (result.error) {
