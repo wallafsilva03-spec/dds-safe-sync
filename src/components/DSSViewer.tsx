@@ -44,7 +44,7 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
   const [isSending, setIsSending] = useState(false);
   const confirmCardRef = useRef<HTMLDivElement>(null);
   const [pendingSubmitData, setPendingSubmitData] = useState<{
-    dssTitle: string; nome: string; funcao: string; dataHora: string;
+    dssTitle: string; nome: string; funcao: string; dataHora: string; assinaturaBase64: string;
   } | null>(null);
 
   const handleSubmit = async () => {
@@ -55,6 +55,7 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
       nome: name.trim(),
       funcao: role.trim(),
       dataHora: new Date().toLocaleString("pt-BR"),
+      assinaturaBase64: signatureDataUrl,
     };
     setPendingSubmitData(submitData);
     setConfirmed(true);
@@ -68,10 +69,10 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
       try {
         const canvas = await html2canvas(confirmCardRef.current!, {
           backgroundColor: "#ffffff",
-          scale: 4,
+          scale: 2,
           useCORS: true,
         });
-        const cardImage = canvas.toDataURL("image/png");
+        const cardImage = canvas.toDataURL("image/jpeg", 0.85);
 
         const result = await sendToGoogleSheets({
           ...pendingSubmitData,
@@ -83,13 +84,17 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
         }
       } catch (err) {
         console.error("Erro ao capturar card:", err);
+        // Fallback: send just the signature
+        const result = await sendToGoogleSheets(pendingSubmitData);
+        if (result.error) {
+          toast({ title: "Aviso", description: result.error, variant: "destructive" });
+        }
       }
       setIsSending(false);
       onSigned(dss.id);
       setPendingSubmitData(null);
     };
 
-    // Small delay to ensure card is fully rendered
     const timer = setTimeout(captureAndSend, 500);
     return () => clearTimeout(timer);
   }, [confirmed, pendingSubmitData]);
