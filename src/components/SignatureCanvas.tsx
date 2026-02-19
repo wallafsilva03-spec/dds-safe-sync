@@ -25,10 +25,10 @@ const SignatureCanvas = ({ onSignatureChange, disabled }: SignatureCanvasProps) 
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.scale(2, 2);
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      ctx.strokeStyle = "#1a2a1a";
+      ctx.strokeStyle = "#000000";
     }
   }, []);
 

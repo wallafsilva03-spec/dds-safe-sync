@@ -69,10 +69,11 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
       try {
         const canvas = await html2canvas(confirmCardRef.current!, {
           backgroundColor: "#ffffff",
-          scale: 2,
+          scale: 3,
           useCORS: true,
+          logging: false,
         });
-        const cardImage = canvas.toDataURL("image/jpeg", 0.85);
+        const cardImage = canvas.toDataURL("image/png");
 
         const result = await sendToGoogleSheets({
           ...pendingSubmitData,
@@ -114,13 +115,13 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
         </div>
 
         <div className="flex-1 flex items-center justify-center p-4">
-          <div ref={confirmCardRef} className="bg-card border-2 border-verde rounded-xl p-6 text-center max-w-[400px] w-full animate-fade-up">
+          <div ref={confirmCardRef} className="bg-white border-2 border-verde rounded-xl p-6 text-center max-w-[400px] w-full animate-fade-up">
             <div className="w-14 h-14 rounded-full bg-gradient-button flex items-center justify-center text-3xl mx-auto mb-3">
               ✅
             </div>
-            <h2 className="font-display text-xl font-bold text-azul mb-1.5">Assinatura Registrada!</h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Obrigado, <strong>{name}</strong>.<br />
+            <h2 className="font-display text-xl font-bold text-[#0d3b66] mb-1.5">Assinatura Registrada!</h2>
+            <p className="text-xs text-[#444444] leading-relaxed">
+              Obrigado, <strong className="text-[#0d3b66]">{name}</strong>.<br />
               Sua leitura e assinatura foram registradas com sucesso.
             </p>
             {signatureDataUrl && (
@@ -128,7 +129,7 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
                 <img src={signatureDataUrl} alt="Assinatura" className="w-full rounded-md" />
               </div>
             )}
-            <p className="text-[10px] text-muted-foreground mt-3 font-mono leading-relaxed">
+            <p className="text-[10px] text-[#666666] mt-3 font-mono leading-relaxed">
               {dss.title}<br />
               {new Date().toLocaleString("pt-BR")}
             </p>
