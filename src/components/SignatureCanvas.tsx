@@ -88,7 +88,7 @@ const SignatureCanvas = ({ onSignatureChange, disabled }: SignatureCanvasProps) 
     tempCtx.fillStyle = "#ffffff";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     tempCtx.drawImage(canvas, 0, 0);
-    return tempCanvas.toDataURL("image/jpeg", 0.85);
+    return tempCanvas.toDataURL("image/png");
   }, []);
 
   const endDraw = () => {

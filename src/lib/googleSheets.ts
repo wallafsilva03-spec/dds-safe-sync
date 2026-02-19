@@ -15,7 +15,6 @@ export interface DSSSignatureData {
   funcao: string;
   dataHora: string;
   assinaturaBase64: string;
-  htmlComprovante?: string;
 }
 
 export async function sendToGoogleSheets(data: DSSSignatureData): Promise<{ success: boolean; error?: string }> {
@@ -28,7 +27,7 @@ export async function sendToGoogleSheets(data: DSSSignatureData): Promise<{ succ
     await fetch(url, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     // no-cors doesn't give us response status, so we assume success
