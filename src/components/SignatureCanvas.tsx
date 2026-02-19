@@ -76,24 +76,35 @@ const SignatureCanvas = ({ onSignatureChange, disabled }: SignatureCanvasProps) 
     }
   };
 
+  const getSignatureDataUrl = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return "";
+    // Create a temp canvas with white background for JPEG export
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext("2d");
+    if (!tempCtx) return "";
+    tempCtx.fillStyle = "#ffffff";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(canvas, 0, 0);
+    return tempCanvas.toDataURL("image/jpeg", 0.85);
+  }, []);
+
   const endDraw = () => {
     if (!isDrawing) return;
     setIsDrawing(false);
-    const canvas = canvasRef.current;
-    if (canvas && hasContent) {
-      onSignatureChange(true, canvas.toDataURL());
+    if (hasContent) {
+      onSignatureChange(true, getSignatureDataUrl());
     }
   };
 
   // Re-trigger on hasContent change after draw ends
   useEffect(() => {
     if (hasContent && !isDrawing) {
-      const canvas = canvasRef.current;
-      if (canvas) {
-        onSignatureChange(true, canvas.toDataURL());
-      }
+      onSignatureChange(true, getSignatureDataUrl());
     }
-  }, [hasContent, isDrawing, onSignatureChange]);
+  }, [hasContent, isDrawing, onSignatureChange, getSignatureDataUrl]);
 
   const clear = () => {
     const canvas = canvasRef.current;
