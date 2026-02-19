@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import html2canvas from "html2canvas";
 import logoMoreno from "@/assets/logo-moreno.png";
 import { DSSItem } from "@/data/dssContent";
 import CountdownTimer from "./CountdownTimer";
@@ -41,27 +42,56 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
   const canSubmit = timerDone && name.trim() && hasSignature && agreed;
 
   const [isSending, setIsSending] = useState(false);
+  const confirmCardRef = useRef<HTMLDivElement>(null);
+  const [pendingSubmitData, setPendingSubmitData] = useState<{
+    dssTitle: string; nome: string; funcao: string; dataHora: string;
+  } | null>(null);
 
   const handleSubmit = async () => {
     if (!canSubmit || isSending) return;
     setIsSending(true);
-
-    const result = await sendToGoogleSheets({
+    const submitData = {
       dssTitle: dss.title,
       nome: name.trim(),
       funcao: role.trim(),
       dataHora: new Date().toLocaleString("pt-BR"),
-      assinaturaBase64: signatureDataUrl,
-    });
-
-    if (result.error) {
-      toast({ title: "Aviso", description: result.error, variant: "destructive" });
-    }
-
-    setIsSending(false);
+    };
+    setPendingSubmitData(submitData);
     setConfirmed(true);
-    onSigned(dss.id);
   };
+
+  // After confirmation card renders, capture it and send
+  useEffect(() => {
+    if (!confirmed || !pendingSubmitData || !confirmCardRef.current) return;
+
+    const captureAndSend = async () => {
+      try {
+        const canvas = await html2canvas(confirmCardRef.current!, {
+          backgroundColor: "#ffffff",
+          scale: 2,
+        });
+        const cardImage = canvas.toDataURL("image/jpeg", 0.9);
+
+        const result = await sendToGoogleSheets({
+          ...pendingSubmitData,
+          assinaturaBase64: cardImage,
+        });
+
+        if (result.error) {
+          toast({ title: "Aviso", description: result.error, variant: "destructive" });
+        }
+      } catch (err) {
+        console.error("Erro ao capturar card:", err);
+      }
+      setIsSending(false);
+      onSigned(dss.id);
+      setPendingSubmitData(null);
+    };
+
+    // Small delay to ensure card is fully rendered
+    const timer = setTimeout(captureAndSend, 500);
+    return () => clearTimeout(timer);
+  }, [confirmed, pendingSubmitData]);
 
   if (confirmed) {
     return (
@@ -78,7 +108,7 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
         </div>
 
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="bg-card border-2 border-verde rounded-xl p-6 text-center max-w-[400px] w-full animate-fade-up">
+          <div ref={confirmCardRef} className="bg-card border-2 border-verde rounded-xl p-6 text-center max-w-[400px] w-full animate-fade-up">
             <div className="w-14 h-14 rounded-full bg-gradient-button flex items-center justify-center text-3xl mx-auto mb-3">
               ✅
             </div>
