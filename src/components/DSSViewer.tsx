@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import html2canvas from "html2canvas";
+
 import logoMoreno from "@/assets/logo-moreno.png";
 import { DSSItem } from "@/data/dssContent";
 import CountdownTimer from "./CountdownTimer";
@@ -61,43 +61,39 @@ const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
     setConfirmed(true);
   };
 
-  // After confirmation card renders, capture it and send
+  // After confirmation, send data with HTML content
   useEffect(() => {
-    if (!confirmed || !pendingSubmitData || !confirmCardRef.current) return;
+    if (!confirmed || !pendingSubmitData) return;
 
-    const captureAndSend = async () => {
-      try {
-        const canvas = await html2canvas(confirmCardRef.current!, {
-          backgroundColor: "#ffffff",
-          scale: 2,
-          useCORS: true,
-          logging: false,
-        });
-        const cardImage = canvas.toDataURL("image/jpeg", 0.92);
+    const sendData = async () => {
+      const htmlContent = `
+        <div style="font-family:Arial,sans-serif;max-width:400px;border:2px solid #2e7d32;border-radius:12px;padding:24px;text-align:center;background:#fff;">
+          <div style="font-size:28px;margin-bottom:8px;">✅</div>
+          <h2 style="color:#0d3b66;font-size:18px;margin:0 0 8px;">Assinatura Registrada</h2>
+          <p style="font-size:12px;color:#444;">Colaborador: <strong style="color:#0d3b66;">${pendingSubmitData.nome}</strong></p>
+          <p style="font-size:12px;color:#444;">Função: <strong style="color:#0d3b66;">${pendingSubmitData.funcao || "—"}</strong></p>
+          <p style="font-size:12px;color:#444;">DSS: ${pendingSubmitData.dssTitle}</p>
+          <p style="font-size:12px;color:#444;">Data/Hora: ${pendingSubmitData.dataHora}</p>
+          <div style="margin:12px auto;max-width:260px;border:1px solid #ddd;border-radius:8px;padding:4px;background:#fafafa;">
+            <img src="${pendingSubmitData.assinaturaBase64}" style="width:100%;border-radius:6px;" />
+          </div>
+        </div>
+      `.trim();
 
-        const result = await sendToGoogleSheets({
-          ...pendingSubmitData,
-          assinaturaBase64: cardImage,
-        });
+      const result = await sendToGoogleSheets({
+        ...pendingSubmitData,
+        assinaturaBase64: htmlContent,
+      });
 
-        if (result.error) {
-          toast({ title: "Aviso", description: result.error, variant: "destructive" });
-        }
-      } catch (err) {
-        console.error("Erro ao capturar card:", err);
-        // Fallback: send just the signature
-        const result = await sendToGoogleSheets(pendingSubmitData);
-        if (result.error) {
-          toast({ title: "Aviso", description: result.error, variant: "destructive" });
-        }
+      if (result.error) {
+        toast({ title: "Aviso", description: result.error, variant: "destructive" });
       }
       setIsSending(false);
       onSigned(dss.id);
       setPendingSubmitData(null);
     };
 
-    const timer = setTimeout(captureAndSend, 500);
-    return () => clearTimeout(timer);
+    sendData();
   }, [confirmed, pendingSubmitData]);
 
   if (confirmed) {
