@@ -1,7 +1,8 @@
 const STORAGE_KEY = "dss-gsheet-url";
+const DEFAULT_GSHEET_URL = "https://script.google.com/macros/s/AKfycbwjdWAaUD2KvjMfP9OrcNxPJdNdD9qDAogqIOrrCZcGeDQpv_vYBMpKaCTAgXnncr8ZJQ/exec";
 
 export function getGSheetUrl(): string {
-  return localStorage.getItem(STORAGE_KEY) || "";
+  return localStorage.getItem(STORAGE_KEY) || DEFAULT_GSHEET_URL;
 }
 
 export function setGSheetUrl(url: string): void {
