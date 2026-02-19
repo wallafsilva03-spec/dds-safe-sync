@@ -15,6 +15,7 @@ export interface DSSSignatureData {
   funcao: string;
   dataHora: string;
   assinaturaBase64: string;
+  htmlComprovante?: string;
 }
 
 export async function sendToGoogleSheets(data: DSSSignatureData): Promise<{ success: boolean; error?: string }> {
