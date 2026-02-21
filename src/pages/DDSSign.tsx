@@ -7,7 +7,7 @@ import AppHeader from "@/components/AppHeader";
 import SignatureCanvas from "@/components/SignatureCanvas";
 import CountdownTimer from "@/components/CountdownTimer";
 
-const TIMER_SECONDS = 10;
+const TIMER_SECONDS = 300;
 
 function getCurrentMonthRef() {
   const now = new Date();
