@@ -19,7 +19,7 @@ const blockColorMap = {
   accent: "bg-verde2",
 };
 
-const TIMER_SECONDS = 10; // temp: 10s for testing
+const TIMER_SECONDS = 300;
 
 const DSSViewer = ({ dss, onBack, onSigned }: DSSViewerProps) => {
   const [timerDone, setTimerDone] = useState(false);
