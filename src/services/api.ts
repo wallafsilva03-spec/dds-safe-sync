@@ -49,7 +49,7 @@ export async function login(
 ): Promise<{ success: boolean; user?: UserData; error?: string }> {
   try {
     const data = await apiFetch<any>({ action: "login", cracha, senha });
-    if (data.success && data.user) {
+    if ((data.ok || data.success) && data.user) {
       return { success: true, user: data.user };
     }
     return { success: false, error: data.error || "Crachá ou senha inválidos." };
