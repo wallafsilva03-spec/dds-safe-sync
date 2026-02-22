@@ -17,6 +17,10 @@ const AppHeader = () => {
     { path: "/meus-dds", label: "Meus DDS" },
   ];
 
+  if (user?.role === "analista_lider" || user?.role === "coordenacao_gerencia") {
+    navItems.push({ path: "/dds-geral", label: "DDS Geral" });
+  }
+
   if (user?.role === "coordenacao_gerencia") {
     navItems.push({ path: "/dashboard", label: "Dashboard" });
   }
