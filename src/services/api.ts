@@ -1,5 +1,4 @@
-const API_URL =
-  import.meta.env.VITE_APPS_SCRIPT_URL ||
+const APPS_SCRIPT_BASE =
   "https://script.google.com/macros/s/AKfycbxH9PTEPvwFgRG5ozNLvt0-5yP-SubTizotKjwh8wCXW3tYiYPQoj-dJPyrwesxLcMQ/exec";
 
 export interface UserData {
