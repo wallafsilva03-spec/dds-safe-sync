@@ -11,6 +11,7 @@ import DDSList from "./pages/DDSList";
 import DDSSign from "./pages/DDSSign";
 import MeusDDS from "./pages/MeusDDS";
 import Dashboard from "./pages/Dashboard";
+import DDSGeral from "./pages/DDSGeral";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,14 @@ const App = () => (
             <Route path="/dds" element={<ProtectedRoute><DDSList /></ProtectedRoute>} />
             <Route path="/dds/:id" element={<ProtectedRoute><DDSSign /></ProtectedRoute>} />
             <Route path="/meus-dds" element={<ProtectedRoute><MeusDDS /></ProtectedRoute>} />
+            <Route
+              path="/dds-geral"
+              element={
+                <ProtectedRoute allowedRoles={["analista_lider", "coordenacao_gerencia"]}>
+                  <DDSGeral />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/dashboard"
               element={
