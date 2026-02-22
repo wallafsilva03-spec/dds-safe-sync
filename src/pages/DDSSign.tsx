@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { signDDS } from "@/services/api";
+import { getDDSTheme } from "@/data/ddsContent";
 import { toast } from "@/hooks/use-toast";
 import AppHeader from "@/components/AppHeader";
 import SignatureCanvas from "@/components/SignatureCanvas";
@@ -27,7 +28,8 @@ const DDSSign = () => {
   const [confirmed, setConfirmed] = useState(false);
 
   const ddsId = id || "DDS-01";
-  const ddsTitle = ddsId.replace("DDS-", "DDS ");
+  const theme = getDDSTheme(ddsId);
+  const ddsTitle = theme ? theme.title : ddsId.replace("DDS-", "DDS ");
 
   const handleTimerComplete = useCallback(() => setTimerDone(true), []);
 
@@ -109,9 +111,24 @@ const DDSSign = () => {
         />
 
         <div className="bg-card border border-border rounded-xl p-4 mb-3.5">
-          <div className="bg-gradient-header rounded-xl p-4 mb-4 text-primary-foreground font-display text-[14px] font-semibold text-center leading-relaxed tracking-wide">
-            Leia o conteúdo do {ddsTitle} e assine abaixo para confirmar sua participação.
-          </div>
+          {theme ? (
+            <div className="bg-background border border-border rounded-xl p-4 mb-4 max-h-[50vh] overflow-y-auto">
+              <h3 className="font-display text-base font-bold text-secondary mb-3 text-center">{ddsTitle}</h3>
+              <div
+                className="prose prose-sm max-w-none text-foreground text-[13px] leading-relaxed
+                  [&_h3]:font-display [&_h3]:text-sm [&_h3]:font-bold [&_h3]:text-secondary [&_h3]:mt-4 [&_h3]:mb-2
+                  [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1
+                  [&_li]:text-[13px] [&_li]:text-muted-foreground
+                  [&_p]:text-muted-foreground [&_p]:mb-2
+                  [&_strong]:text-foreground"
+                dangerouslySetInnerHTML={{ __html: theme.content }}
+              />
+            </div>
+          ) : (
+            <div className="bg-gradient-header rounded-xl p-4 mb-4 text-primary-foreground font-display text-[14px] font-semibold text-center leading-relaxed tracking-wide">
+              Leia o conteúdo do {ddsTitle} e assine abaixo para confirmar sua participação.
+            </div>
+          )}
 
           <p className="text-[11px] text-muted-foreground mb-2 text-center">
             Assine no campo abaixo com o dedo ou mouse:
