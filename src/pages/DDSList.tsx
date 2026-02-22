@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { getMyDDS, DDSRecord } from "@/services/api";
+import { getDDSTheme } from "@/data/ddsContent";
 import AppHeader from "@/components/AppHeader";
 
 function getCurrentMonthRef() {
@@ -10,10 +11,15 @@ function getCurrentMonthRef() {
 }
 
 function generateDDSItems() {
-  return Array.from({ length: 30 }, (_, i) => ({
-    id: `DDS-${String(i + 1).padStart(2, "0")}`,
-    title: `DDS ${String(i + 1).padStart(2, "0")}`,
-  }));
+  return Array.from({ length: 30 }, (_, i) => {
+    const id = `DDS-${String(i + 1).padStart(2, "0")}`;
+    const theme = getDDSTheme(id);
+    return {
+      id,
+      title: theme ? theme.title : `DDS ${String(i + 1).padStart(2, "0")}`,
+      hasContent: !!theme,
+    };
+  });
 }
 
 const DDSList = () => {
@@ -67,7 +73,11 @@ const DDSList = () => {
                       {signed ? "✅" : "📋"}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-display text-[15px] font-bold text-foreground">{item.title}</h3>
+                      <h3 className="font-display text-[15px] font-bold text-foreground leading-tight">
+                        <span className="text-secondary">{item.id.replace("DDS-", "DDS ")}</span>
+                        {item.hasContent && <span className="text-muted-foreground font-normal"> — </span>}
+                        {item.hasContent && <span className="text-[13px] font-semibold">{item.title}</span>}
+                      </h3>
                       {signed && record?.signed_at && (
                         <p className="text-[10px] text-muted-foreground">
                           Assinado em {record.signed_at}
