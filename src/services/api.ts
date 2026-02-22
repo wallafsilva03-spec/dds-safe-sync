@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_APPS_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbwjdWAaUD2KvjMfP9OrcNxPJdNdD9qDAogqIOrrCZcGeDQpv_vYBMpKaCTAgXnncr8ZJQ/exec";
+const API_URL =
+  import.meta.env.VITE_APPS_SCRIPT_URL ||
+  "https://script.google.com/macros/s/AKfycbxH9PTEPvwFgRG5ozNLvt0-5yP-SubTizotKjwh8wCXW3tYiYPQoj-dJPyrwesxLcMQ/exec";
 
 export interface UserData {
   cracha: string;
@@ -41,7 +43,10 @@ async function apiFetch<T>(params: Record<string, string>): Promise<T> {
   return res.json();
 }
 
-export async function login(cracha: string, senha: string): Promise<{ success: boolean; user?: UserData; error?: string }> {
+export async function login(
+  cracha: string,
+  senha: string,
+): Promise<{ success: boolean; user?: UserData; error?: string }> {
   try {
     const data = await apiFetch<any>({ action: "login", cracha, senha });
     if (data.success && data.user) {
