@@ -26,7 +26,7 @@ const Login = () => {
     try {
       const result = await login(cracha.trim(), senha.trim() || "123");
 
-      if (result?.ok === true && result?.user) {
+      if (result?.success === true && result?.user) {
         setUser(result.user);
         navigate("/dds");
       } else {
