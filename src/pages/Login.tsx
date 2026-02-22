@@ -14,36 +14,39 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!cracha.trim()) {
       setError("Informe o crachá.");
       return;
     }
+
     setLoading(true);
     setError("");
-    const result = await login(cracha.trim(), senha);
-    if (result.success && result.user) {
-      setUser(result.user);
-      navigate("/dds");
-    } else {
-      setError(result.error || "Erro ao fazer login.");
+
+    try {
+      const result = await login(cracha.trim(), senha.trim() || "123");
+
+      if (result?.ok === true && result?.user) {
+        setUser(result.user);
+        navigate("/dds");
+      } else {
+        setError(result?.error || "Crachá ou senha inválidos.");
+      }
+    } catch (err) {
+      setError("Falha de conexão com o servidor.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <div className="bg-gradient-header w-full max-w-[400px] rounded-t-xl px-6 py-8 flex flex-col items-center gap-3">
-        <img
-          src={logoMoreno}
-          alt="Grupo Moreno"
-          className="h-[80px] object-contain rounded-lg bg-white/[0.08] p-1.5"
-        />
+        <img src={logoMoreno} alt="Grupo Moreno" className="h-[80px] object-contain rounded-lg bg-white/[0.08] p-1.5" />
         <h1 className="font-display text-[24px] font-extrabold text-primary-foreground text-center tracking-wide">
           DIÁLOGO DE SEGURANÇA
         </h1>
-        <p className="text-xs text-primary-foreground/65 text-center">
-          Faça login com seu crachá
-        </p>
+        <p className="text-xs text-primary-foreground/65 text-center">Faça login com seu crachá</p>
       </div>
 
       <form
@@ -76,9 +79,7 @@ const Login = () => {
           />
         </div>
 
-        {error && (
-          <p className="text-xs text-destructive text-center font-bold">{error}</p>
-        )}
+        {error && <p className="text-xs text-destructive text-center font-bold">{error}</p>}
 
         <button
           type="submit"
@@ -89,9 +90,7 @@ const Login = () => {
         </button>
       </form>
 
-      <p className="text-[10px] text-muted-foreground mt-6 text-center">
-        © Grupo Moreno · CTA – Diálogo de Segurança
-      </p>
+      <p className="text-[10px] text-muted-foreground mt-6 text-center">© Grupo Moreno · CTA – Diálogo de Segurança</p>
     </div>
   );
 };
