@@ -30,13 +30,17 @@ const DDSList = () => {
   const mesRef = getCurrentMonthRef();
   const items = generateDDSItems();
 
-  useEffect(() => {
+  const loadRecords = () => {
     if (!user) return;
     setLoading(true);
     getMyDDS(mesRef, user.cracha).then((r) => {
       setRecords(r);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    loadRecords();
   }, [user, mesRef]);
 
   const getRecord = (id: string) => records.find((r) => r.tema_id === id);

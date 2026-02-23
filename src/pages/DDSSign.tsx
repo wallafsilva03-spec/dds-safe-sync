@@ -58,6 +58,8 @@ const DDSSign = () => {
 
     if (result.error) {
       toast({ title: "Aviso", description: result.error, variant: "destructive" });
+      setIsSending(false);
+      return;
     }
     setIsSending(false);
     setConfirmed(true);
