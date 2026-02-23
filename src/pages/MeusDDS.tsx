@@ -3,7 +3,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getMyDDS, DDSRecord } from "@/services/api";
 import AppHeader from "@/components/AppHeader";
 
-const META = 30;
+function getMetaAtual() {
+  return new Date().getDate(); // meta = dia atual do mês
+}
 
 function getCurrentMonthRef() {
   const now = new Date();
@@ -24,6 +26,7 @@ const MeusDDS = () => {
     });
   }, [user, mesRef]);
 
+  const META = getMetaAtual();
   const total = records.length;
   const faltam = Math.max(0, META - total);
   const progress = Math.min(100, (total / META) * 100);
