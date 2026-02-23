@@ -15,6 +15,10 @@ function getCurrentMonthRef() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
+function getBrasiliaTimestamp() {
+  return new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+}
+
 const DDSSign = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -54,6 +58,8 @@ const DDSSign = () => {
       tema_titulo: ddsTitle,
       mes_ref: getCurrentMonthRef(),
       assinatura_png_base64: signatureDataUrl,
+      timestamp: getBrasiliaTimestamp(),
+      pasta_colaborador: `${user.cracha}_${user.nome.replace(/\s+/g, "_")}`,
     });
 
     if (result.error) {
