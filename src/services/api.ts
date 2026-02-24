@@ -78,7 +78,6 @@ export async function signDDS(payload: {
   mes_ref: string;
   assinatura_png_base64: string;
   timestamp: string;
-  pasta_colaborador: string;
 }): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch(API_URL, {

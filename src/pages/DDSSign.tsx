@@ -59,7 +59,6 @@ const DDSSign = () => {
       mes_ref: getCurrentMonthRef(),
       assinatura_png_base64: signatureDataUrl,
       timestamp: getBrasiliaTimestamp(),
-      pasta_colaborador: `${user.cracha}_${user.nome.replace(/\s+/g, "_")}`,
     });
 
     if (result.error) {

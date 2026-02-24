@@ -86,7 +86,7 @@ const DDSGeral = () => {
               </div>
               <div className="bg-card border border-border rounded-xl p-4 text-center">
                 <p className="font-display text-3xl font-bold text-verde">{data.meta_por_funcionario}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mt-1">Meta/Funcionário</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mt-1">Meta (Dia {currentDay})</p>
               </div>
             </div>
 
