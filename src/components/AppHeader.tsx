@@ -17,11 +17,11 @@ const AppHeader = () => {
     { path: "/meus-dds", label: "Meus DDS" },
   ];
 
-  if (user?.role === "analista_lider" || user?.role === "coordenacao_gerencia") {
+  if (user?.role === "admin" || user?.role === "admin") {
     navItems.push({ path: "/dds-geral", label: "DDS Geral" });
   }
 
-  if (user?.role === "coordenacao_gerencia") {
+  if (user?.role === "admin") {
     navItems.push({ path: "/dashboard", label: "Dashboard" });
   }
 
