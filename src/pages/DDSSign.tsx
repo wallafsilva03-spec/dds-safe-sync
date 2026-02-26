@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDDS } from "@/contexts/DDSContext";
 import { signDDS } from "@/services/api";
 import { getDDSTheme } from "@/data/ddsContent";
 import { toast } from "@/hooks/use-toast";
@@ -23,6 +24,7 @@ const DDSSign = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { addLocalRecord, refreshRecords } = useDDS();
 
   const [timerDone, setTimerDone] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
@@ -48,6 +50,8 @@ const DDSSign = () => {
     if (!canSubmit || isSending || !user) return;
     setIsSending(true);
 
+    const timestamp = getBrasiliaTimestamp();
+
     const result = await signDDS({
       cracha: user.cracha,
       nome: user.nome,
@@ -58,7 +62,7 @@ const DDSSign = () => {
       tema_titulo: ddsTitle,
       mes_ref: getCurrentMonthRef(),
       assinatura_png_base64: signatureDataUrl,
-      timestamp: getBrasiliaTimestamp(),
+      timestamp,
     });
 
     if (result.error) {
@@ -66,6 +70,17 @@ const DDSSign = () => {
       setIsSending(false);
       return;
     }
+
+    // Atualiza localmente de imediato (feedback instantâneo)
+    addLocalRecord({
+      tema_id: ddsId,
+      tema_titulo: ddsTitle,
+      signed_at: timestamp,
+    });
+
+    // Recarrega do backend em background para garantir consistência
+    refreshRecords(user.cracha);
+
     setIsSending(false);
     setConfirmed(true);
   };
@@ -84,7 +99,7 @@ const DDSSign = () => {
             </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Obrigado, <strong className="text-secondary">{user?.nome}</strong>.<br />
-              {ddsTitle} assinado com sucesso.
+              <strong>{ddsTitle}</strong> marcado como <span className="text-verde font-bold">Assinado</span> com sucesso.
             </p>
             {signatureDataUrl && (
               <div className="max-w-[260px] mx-auto mt-3 bg-background border border-border rounded-lg p-1">
