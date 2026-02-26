@@ -63,7 +63,7 @@ const App = () => (
               <Route
                 path="/dds-geral"
                 element={
-                  <ProtectedRoute allowedRoles={["analista_lider", "coordenacao_gerencia"]}>
+                  <ProtectedRoute allowedRoles={["admin]}>
                     <DDSGeral />
                   </ProtectedRoute>
                 }
