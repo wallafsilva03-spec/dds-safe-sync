@@ -28,10 +28,38 @@ const App = () => (
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<Navigate to="/dds" replace />} />
-              <Route path="/old" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-              <Route path="/dds" element={<ProtectedRoute><DDSList /></ProtectedRoute>} />
-              <Route path="/dds/:id" element={<ProtectedRoute><DDSSign /></ProtectedRoute>} />
-              <Route path="/meus-dds" element={<ProtectedRoute><MeusDDS /></ProtectedRoute>} />
+              <Route
+                path="/old"
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dds"
+                element={
+                  <ProtectedRoute>
+                    <DDSList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dds/:id"
+                element={
+                  <ProtectedRoute>
+                    <DDSSign />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/meus-dds"
+                element={
+                  <ProtectedRoute>
+                    <MeusDDS />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/dds-geral"
                 element={
@@ -43,7 +71,7 @@ const App = () => (
               <Route
                 path="/dashboard"
                 element={
-                  <ProtectedRoute allowedRoles={["coordenacao_gerencia"]}>
+                  <ProtectedRoute allowedRoles={["admin"]}>
                     <Dashboard />
                   </ProtectedRoute>
                 }
