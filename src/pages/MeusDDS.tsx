@@ -1,30 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getMyDDS, DDSRecord } from "@/services/api";
+import { useDDS } from "@/contexts/DDSContext";
 import AppHeader from "@/components/AppHeader";
 
 function getMetaAtual() {
-  return new Date().getDate(); // meta = dia atual do mês
-}
-
-function getCurrentMonthRef() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  return new Date().getDate();
 }
 
 const MeusDDS = () => {
   const { user } = useAuth();
-  const [records, setRecords] = useState<DDSRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const mesRef = getCurrentMonthRef();
+  const { records, mesRef, loading, refreshRecords } = useDDS();
 
   useEffect(() => {
-    if (!user) return;
-    getMyDDS(mesRef, user.cracha).then((r) => {
-      setRecords(r);
-      setLoading(false);
-    });
-  }, [user, mesRef]);
+    if (user) refreshRecords(user.cracha);
+  }, [user]);
 
   const META = getMetaAtual();
   const total = records.length;

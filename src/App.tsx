@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { DDSProvider } from "@/contexts/DDSContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
@@ -22,33 +23,35 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate to="/dds" replace />} />
-            <Route path="/old" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/dds" element={<ProtectedRoute><DDSList /></ProtectedRoute>} />
-            <Route path="/dds/:id" element={<ProtectedRoute><DDSSign /></ProtectedRoute>} />
-            <Route path="/meus-dds" element={<ProtectedRoute><MeusDDS /></ProtectedRoute>} />
-            <Route
-              path="/dds-geral"
-              element={
-                <ProtectedRoute allowedRoles={["analista_lider", "coordenacao_gerencia"]}>
-                  <DDSGeral />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute allowedRoles={["coordenacao_gerencia"]}>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <DDSProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Navigate to="/dds" replace />} />
+              <Route path="/old" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/dds" element={<ProtectedRoute><DDSList /></ProtectedRoute>} />
+              <Route path="/dds/:id" element={<ProtectedRoute><DDSSign /></ProtectedRoute>} />
+              <Route path="/meus-dds" element={<ProtectedRoute><MeusDDS /></ProtectedRoute>} />
+              <Route
+                path="/dds-geral"
+                element={
+                  <ProtectedRoute allowedRoles={["analista_lider", "coordenacao_gerencia"]}>
+                    <DDSGeral />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["coordenacao_gerencia"]}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </DDSProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

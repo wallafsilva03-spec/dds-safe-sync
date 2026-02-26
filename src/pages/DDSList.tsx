@@ -1,14 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { getMyDDS, DDSRecord } from "@/services/api";
+import { useDDS } from "@/contexts/DDSContext";
 import { getDDSTheme } from "@/data/ddsContent";
 import AppHeader from "@/components/AppHeader";
-
-function getCurrentMonthRef() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-}
 
 function generateDDSItems() {
   return Array.from({ length: 30 }, (_, i) => {
@@ -25,23 +20,12 @@ function generateDDSItems() {
 const DDSList = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [records, setRecords] = useState<DDSRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const mesRef = getCurrentMonthRef();
+  const { records, mesRef, loading, refreshRecords } = useDDS();
   const items = generateDDSItems();
 
-  const loadRecords = () => {
-    if (!user) return;
-    setLoading(true);
-    getMyDDS(mesRef, user.cracha).then((r) => {
-      setRecords(r);
-      setLoading(false);
-    });
-  };
-
   useEffect(() => {
-    loadRecords();
-  }, [user, mesRef]);
+    if (user) refreshRecords(user.cracha);
+  }, [user]);
 
   const getRecord = (id: string) => records.find((r) => r.tema_id === id);
 
