@@ -350,6 +350,376 @@ export const ddsThemes: DDSTheme[] = [
     `,
   },
   {
+    id: "DDS-17",
+    title: "Prevenção de Quedas em Altura",
+    content: `
+<p>Trabalhos em altura são aqueles realizados acima de <strong>2 metros</strong> do nível inferior, onde haja risco de queda. A queda é uma das principais causas de acidentes graves e fatais no trabalho.</p>
+
+<h3>EPIs Obrigatórios para Trabalho em Altura</h3>
+<ul>
+<li>Cinto de segurança tipo paraquedista</li>
+<li>Talabarte duplo com absorvedor de energia</li>
+<li>Capacete com jugular</li>
+<li>Calçado de segurança com solado antiderrapante</li>
+</ul>
+
+<h3>Regras Essenciais</h3>
+<ul>
+<li>Nunca trabalhe em altura sem estar devidamente amarrado</li>
+<li>Verifique o ponto de ancoragem antes de iniciar</li>
+<li>Nunca use cinto de segurança tipo abdominal para trabalho em altura</li>
+<li>Realize inspeção visual do cinto e talabarte antes do uso</li>
+<li>Em caso de chuva, suspenda a atividade imediatamente</li>
+</ul>
+
+<p><strong>LEMBRE-SE: Nenhuma tarefa é tão urgente que não possa ser feita com segurança!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-18",
+    title: "Bloqueio e Etiquetagem (LOTO)",
+    content: `
+<p>O procedimento de Bloqueio e Etiquetagem (Lock Out / Tag Out — LOTO) é fundamental para proteger trabalhadores durante manutenção de máquinas e equipamentos.</p>
+
+<h3>Quando Aplicar</h3>
+<ul>
+<li>Manutenção de máquinas e equipamentos</li>
+<li>Limpeza interna de equipamentos</li>
+<li>Desobstrução de engarrafamentos</li>
+<li>Troca de partes e componentes</li>
+</ul>
+
+<h3>Passos do Procedimento LOTO</h3>
+<ul>
+<li><strong>1.</strong> Identifique todas as fontes de energia</li>
+<li><strong>2.</strong> Comunique as pessoas envolvidas</li>
+<li><strong>3.</strong> Desligue o equipamento pelo painel principal</li>
+<li><strong>4.</strong> Aplique o cadeado pessoal e etiqueta de bloqueio</li>
+<li><strong>5.</strong> Teste o equipamento para garantir a desenergização</li>
+<li><strong>6.</strong> Inicie a manutenção com segurança</li>
+</ul>
+
+<p><strong>CADA TRABALHADOR tem seu próprio cadeado. Nunca retire o cadeado de outra pessoa!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-19",
+    title: "Prevenção de Incêndio",
+    content: `
+<p>O fogo é resultado da combinação de três elementos: <strong>combustível</strong>, <strong>comburente (oxigênio)</strong> e <strong>calor</strong>. Para prevenir incêndios, é preciso eliminar ao menos um desses elementos.</p>
+
+<h3>Classes de Incêndio</h3>
+<ul>
+<li><strong>Classe A:</strong> Materiais sólidos (madeira, papel, tecido) — use água</li>
+<li><strong>Classe B:</strong> Líquidos inflamáveis (gasolina, álcool) — use CO₂ ou pó químico</li>
+<li><strong>Classe C:</strong> Equipamentos elétricos — use CO₂ ou pó químico (NUNCA água)</li>
+<li><strong>Classe D:</strong> Metais combustíveis — use areia seca</li>
+</ul>
+
+<h3>Como Usar o Extintor (PASS)</h3>
+<ul>
+<li><strong>P</strong>uxe o pino de segurança</li>
+<li><strong>A</strong>ponte o bico para a base do fogo</li>
+<li><strong>S</strong>obre o gatilho com firmeza</li>
+<li><strong>S</strong>arrafo — faça movimentos laterais</li>
+</ul>
+
+<p><strong>Em caso de incêndio de grande proporção: evacue a área e acione o Corpo de Bombeiros (193)!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-20",
+    title: "Saúde Mental no Trabalho",
+    content: `
+<p>A saúde mental é tão importante quanto a saúde física. O estresse, a ansiedade e a sobrecarga de trabalho afetam diretamente a segurança e a produtividade.</p>
+
+<h3>Sinais de Alerta</h3>
+<ul>
+<li>Dificuldade de concentração</li>
+<li>Irritabilidade constante</li>
+<li>Cansaço excessivo mesmo após descanso</li>
+<li>Insônia ou sono excessivo</li>
+<li>Sentimentos de desmotivação</li>
+</ul>
+
+<h3>Como Cuidar da Saúde Mental</h3>
+<ul>
+<li>Organize suas tarefas e prioridades</li>
+<li>Faça pausas regulares durante o trabalho</li>
+<li>Pratique atividade física regularmente</li>
+<li>Mantenha uma boa alimentação e hidratação</li>
+<li>Converse com colegas, gestores ou profissionais de saúde</li>
+<li>Respeite seu tempo de descanso e lazer</li>
+</ul>
+
+<p><strong>Não hesite em buscar ajuda. Falar sobre o que sente é um sinal de força, não fraqueza!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-21",
+    title: "Hidratação e Calor no Trabalho",
+    content: `
+<p>O trabalho exposto ao calor, especialmente na safra, exige atenção redobrada à hidratação. A desidratação pode causar desde cansaço até situações graves como a insolação.</p>
+
+<h3>Sinais de Desidratação</h3>
+<ul>
+<li>Sede intensa</li>
+<li>Urina escura ou redução na frequência urinária</li>
+<li>Tontura ou dor de cabeça</li>
+<li>Cansaço excessivo e dificuldade de concentração</li>
+<li>Cãibras musculares</li>
+</ul>
+
+<h3>Boas Práticas de Hidratação</h3>
+<ul>
+<li>Beba água regularmente, sem esperar a sede</li>
+<li>Consuma ao menos 250ml de água a cada hora de trabalho</li>
+<li>Em dias muito quentes, aumente a ingestão</li>
+<li>Evite bebidas alcoólicas antes e durante o trabalho</li>
+<li>Prefira locais com sombra para descanso</li>
+</ul>
+
+<p><strong>Em caso de insolação: leve o trabalhador para local fresco, hidrate-o e acione o ambulatório médico!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-22",
+    title: "Resíduos e Meio Ambiente",
+    content: `
+<p>A correta destinação dos resíduos é responsabilidade de todos. O descarte inadequado polui o meio ambiente, prejudica a saúde e pode gerar multas e penalidades legais.</p>
+
+<h3>Tipos de Resíduos e Destinação</h3>
+<ul>
+<li><strong>Resíduos comuns:</strong> Lixo orgânico e embalagens limpas — coleta municipal</li>
+<li><strong>Resíduos perigosos:</strong> Óleos, graxas, embalagens de agroquímicos — coletores específicos</li>
+<li><strong>Resíduos recicláveis:</strong> Papel, plástico, metal, vidro — coleta seletiva</li>
+</ul>
+
+<h3>Regras Fundamentais</h3>
+<ul>
+<li>Nunca descarte resíduos em rios, lagoas ou áreas de preservação</li>
+<li>Utilize sempre os coletores corretos de acordo com o tipo de resíduo</li>
+<li>Embalagens de agroquímicos têm descarte obrigatório nas unidades credenciadas</li>
+<li>Comunique imediatamente qualquer vazamento de produtos químicos</li>
+</ul>
+
+<p><strong>Preservar o meio ambiente é uma obrigação legal e um compromisso com as futuras gerações!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-23",
+    title: "Segurança em Espaços Confinados",
+    content: `
+<p>Espaço confinado é qualquer área não projetada para ocupação contínua, com entrada e saída limitadas, como silos, fossas, tanques, dutos e poços.</p>
+
+<h3>Principais Riscos</h3>
+<ul>
+<li>Atmosfera deficiente de oxigênio (abaixo de 19,5%)</li>
+<li>Atmosfera enriquecida de oxigênio (acima de 23,5%)</li>
+<li>Presença de gases tóxicos ou inflamáveis</li>
+<li>Risco de engolfamento por materiais sólidos ou líquidos</li>
+</ul>
+
+<h3>Procedimentos Obrigatórios</h3>
+<ul>
+<li>Nunca entre em espaço confinado sem autorização (Permissão de Trabalho)</li>
+<li>Realize medição atmosférica antes da entrada</li>
+<li>Tenha sempre um vigia externo durante o trabalho</li>
+<li>Use equipamentos de proteção respiratória adequados</li>
+<li>Estabeleça plano de resgate antes de iniciar</li>
+</ul>
+
+<p><strong>NUNCA tente resgatar uma vítima em espaço confinado sem equipamento adequado. Você pode se tornar mais uma vítima!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-24",
+    title: "Primeiros Socorros — Noções Básicas",
+    content: `
+<p>Conhecer noções básicas de primeiros socorros pode salvar vidas. O atendimento correto nos primeiros minutos faz toda a diferença.</p>
+
+<h3>Princípios Básicos (3P's)</h3>
+<ul>
+<li><strong>Preservar a vida</strong> — da vítima e dos socorristas</li>
+<li><strong>Prevenir o agravamento</strong> — não mova vítimas sem necessidade</li>
+<li><strong>Promover a recuperação</strong> — conforto e segurança para a vítima</li>
+</ul>
+
+<h3>Situações Frequentes</h3>
+<ul>
+<li><strong>Cortes e hemorragias:</strong> comprima o local com pano limpo</li>
+<li><strong>Queimaduras:</strong> resfrie com água corrente por 10 minutos (nunca gelo)</li>
+<li><strong>Desmaio:</strong> deixe deitado, eleve os pés e verifique a respiração</li>
+<li><strong>Fratura:</strong> imobilize o membro, não tente alinhar o osso</li>
+<li><strong>Parada cardíaca:</strong> inicie RCP e acione o SAMU (192)</li>
+</ul>
+
+<p><strong>Mantenha a calma, chame socorro e não deixe a vítima sozinha!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-25",
+    title: "Operação Segura de Empilhadeiras",
+    content: `
+<p>Empilhadeiras são equipamentos de grande porte que exigem atenção e responsabilidade. O uso inadequado pode causar acidentes graves com pessoas e danos ao patrimônio.</p>
+
+<h3>Antes de Operar</h3>
+<ul>
+<li>Verifique os itens do check-list diário do equipamento</li>
+<li>Confirme que a habilitação e treinamento estão em dia</li>
+<li>Certifique-se de que o cinto de segurança está funcionando</li>
+</ul>
+
+<h3>Durante a Operação</h3>
+<ul>
+<li>Reduza a velocidade em curvas e áreas movimentadas</li>
+<li>Nunca transporte pessoas no garfo ou na carroceria</li>
+<li>Mantenha o garfo baixo durante o deslocamento</li>
+<li>Dê atenção aos pontos cegos — use buzina ao sair de corredores</li>
+<li>Respeite os limites de carga do equipamento</li>
+</ul>
+
+<h3>Proibições</h3>
+<ul>
+<li>Operar empilhadeira sem habilitação específica</li>
+<li>Deixar a empilhadeira ligada sem operador presente</li>
+<li>Transportar cargas instáveis sem amarração</li>
+</ul>
+    `,
+  },
+  {
+    id: "DDS-26",
+    title: "Riscos Elétricos e Prevenção",
+    content: `
+<p>A eletricidade é invisível e silenciosa, mas extremamente perigosa. O choque elétrico pode causar queimaduras, parada cardiorrespiratória e até a morte.</p>
+
+<h3>Principais Riscos Elétricos</h3>
+<ul>
+<li>Contato com fios desencapados ou danificados</li>
+<li>Equipamentos sem aterramento</li>
+<li>Sobrecarga de tomadas (benjamins)</li>
+<li>Trabalho em equipamentos energizados</li>
+<li>Uso de equipamentos elétricos em locais úmidos</li>
+</ul>
+
+<h3>Prevenção</h3>
+<ul>
+<li>Somente eletricistas habilitados (NR-10) devem realizar serviços elétricos</li>
+<li>Nunca use fios, tomadas ou equipamentos com danos visíveis</li>
+<li>Mantenha distância segura de cabos e redes de alta tensão</li>
+<li>Desligue o equipamento antes de qualquer manutenção</li>
+<li>Reporte imediatamente qualquer irregularidade elétrica ao setor de manutenção</li>
+</ul>
+
+<p><strong>Em caso de choque elétrico: não toque na vítima com as mãos — desligue a energia primeiro e chame socorro!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-27",
+    title: "Segurança na Aplicação de Agroquímicos",
+    content: `
+<p>A aplicação de agroquímicos exige treinamento, equipamentos adequados e extrema atenção aos procedimentos de segurança para proteger sua saúde e o meio ambiente.</p>
+
+<h3>EPIs Obrigatórios</h3>
+<ul>
+<li>Macacão impermeável</li>
+<li>Luvas de borracha nitrílica</li>
+<li>Botas de borracha</li>
+<li>Máscara respiratória com filtro específico</li>
+<li>Óculos de proteção</li>
+<li>Touca árabe</li>
+</ul>
+
+<h3>Procedimentos Importantes</h3>
+<ul>
+<li>Leia sempre o rótulo e a bula do produto antes de usar</li>
+<li>Prepare a calda em local arejado</li>
+<li>Nunca aplique em condições de vento forte</li>
+<li>Ao final, lave os EPIs, tome banho e troque de roupa</li>
+<li>Guarde os agroquímicos em local adequado e longe de crianças</li>
+</ul>
+
+<p><strong>Sintomas de intoxicação (náusea, tontura, visão turva): afaste-se imediatamente e procure atendimento médico!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-28",
+    title: "Comunicação de Acidentes e Quase Acidentes",
+    content: `
+<p>Todo acidente ou quase acidente DEVE ser comunicado imediatamente ao gestor e ao Departamento de Segurança do Trabalho. A notificação é obrigatória e protege tanto o trabalhador quanto a empresa.</p>
+
+<h3>Por Que Comunicar?</h3>
+<ul>
+<li>Garantir o atendimento médico ao trabalhador</li>
+<li>Identificar e eliminar as causas do acidente</li>
+<li>Prevenir que o mesmo acidente aconteça com outro colega</li>
+<li>Cumprir obrigações legais (CAT — Comunicação de Acidente de Trabalho)</li>
+</ul>
+
+<h3>O Que Deve Ser Comunicado</h3>
+<ul>
+<li>Acidentes com lesão, mesmo pequenas</li>
+<li>Quase acidentes (situações de risco que não resultaram em lesão)</li>
+<li>Doenças ou sintomas possivelmente relacionados ao trabalho</li>
+<li>Condições inseguras identificadas no ambiente de trabalho</li>
+</ul>
+
+<p><strong>A omissão de acidentes prejudica você, seus colegas e a empresa. Comunique sempre!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-29",
+    title: "Transporte Seguro de Trabalhadores",
+    content: `
+<p>O transporte de trabalhadores rurais é regulamentado pela NR-31 e exige veículos adequados e motoristas habilitados para garantir a segurança de todos.</p>
+
+<h3>Regras para o Transporte</h3>
+<ul>
+<li>Todos os passageiros devem estar sentados durante o transporte</li>
+<li>É proibido o transporte de trabalhadores na carroceria de caminhões e tratores</li>
+<li>Veículos devem possuir assentos fixos e seguros</li>
+<li>O motorista deve ter habilitação compatível com o veículo</li>
+<li>A lotação máxima do veículo deve ser respeitada</li>
+</ul>
+
+<h3>Responsabilidades do Trabalhador</h3>
+<ul>
+<li>Use o cinto de segurança sempre que disponível</li>
+<li>Não distraia o motorista durante o trajeto</li>
+<li>Informe o motorista sobre qualquer anomalia no veículo</li>
+<li>Respeite as regras de embarque e desembarque</li>
+</ul>
+
+<p><strong>Em caso de acidente de trajeto, comunique imediatamente o gestor — isso também é acidente de trabalho!</strong></p>
+    `,
+  },
+  {
+    id: "DDS-30",
+    title: "Ordem e Limpeza no Ambiente de Trabalho (5S)",
+    content: `
+<p>Um ambiente limpo e organizado é um ambiente mais seguro e produtivo. O programa 5S é uma metodologia simples e eficaz para organizar o local de trabalho.</p>
+
+<h3>Os 5 Sensos</h3>
+<ul>
+<li><strong>Seiri (Utilização):</strong> Elimine o que não é necessário</li>
+<li><strong>Seiton (Organização):</strong> Um lugar para cada coisa, cada coisa no seu lugar</li>
+<li><strong>Seiso (Limpeza):</strong> Mantenha o ambiente sempre limpo</li>
+<li><strong>Seiketsu (Padronização):</strong> Padronize as boas práticas</li>
+<li><strong>Shitsuke (Disciplina):</strong> Mantenha a disciplina e os hábitos criados</li>
+</ul>
+
+<h3>Benefícios Diretos</h3>
+<ul>
+<li>Redução de acidentes por tropeços, quedas e choques</li>
+<li>Facilidade para encontrar ferramentas e materiais</li>
+<li>Maior produtividade e qualidade no trabalho</li>
+<li>Ambiente de trabalho mais agradável para todos</li>
+</ul>
+
+<p><strong>A ordem e a limpeza são responsabilidade de TODOS. Não espere alguém mandar — faça a sua parte!</strong></p>
+    `,
+  },
+  {
     id: "DDS-16",
     title: "Segurança em Operações com Oxi-Corte",
     content: `
