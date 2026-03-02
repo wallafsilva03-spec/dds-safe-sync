@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDDS } from "@/contexts/DDSContext";
 import { getDashboard, DashboardData } from "@/services/api";
 import AppHeader from "@/components/AppHeader";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
@@ -23,6 +24,7 @@ function getCurrentDayOfMonth(mesRef: string) {
 
 const DDSGeral = () => {
   const { user } = useAuth();
+  const { lastSignedAt } = useDDS();
   const [mesRef, setMesRef] = useState(getCurrentMonthRef());
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ const DDSGeral = () => {
       setData(d);
       setLoading(false);
     });
-  }, [mesRef, setor]);
+  }, [mesRef, setor, lastSignedAt]);
 
   const daysInMonth = getDaysInMonth(mesRef);
   const currentDay = getCurrentDayOfMonth(mesRef);

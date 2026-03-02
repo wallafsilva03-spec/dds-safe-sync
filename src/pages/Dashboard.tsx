@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDashboard, DashboardData } from "@/services/api";
+import { useDDS } from "@/contexts/DDSContext";
 import AppHeader from "@/components/AppHeader";
 
 function getCurrentMonthRef() {
@@ -8,6 +9,7 @@ function getCurrentMonthRef() {
 }
 
 const Dashboard = () => {
+  const { lastSignedAt } = useDDS();
   const [mesRef, setMesRef] = useState(getCurrentMonthRef());
   const [setor, setSetor] = useState("TODOS");
   const [data, setData] = useState<DashboardData | null>(null);
@@ -19,7 +21,7 @@ const Dashboard = () => {
       setData(d);
       setLoading(false);
     });
-  }, [mesRef, setor]);
+  }, [mesRef, setor, lastSignedAt]);
 
   const kpis = data
     ? [
