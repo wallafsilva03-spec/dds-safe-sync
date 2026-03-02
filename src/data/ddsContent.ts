@@ -350,6 +350,35 @@ export const ddsThemes: DDSTheme[] = [
     `,
   },
   {
+    id: "DDS-16",
+    title: "Segurança em Operações com Oxi-Corte",
+    content: `
+<p>Confira todos os itens do seu conjunto oxicorte.</p>
+
+<ul>
+<li><strong>Cortinas anti-chama:</strong> Fundamentais para garantir a segurança de todos os colaboradores no local, além de proteger o ambiente de possíveis incêndios</li>
+</ul>
+
+<h3>EPIs Obrigatórios para Oxi-Corte</h3>
+<ul>
+<li>Óculos de Segurança</li>
+<li>Protetor auricular</li>
+<li>Avental e luvas de raspa</li>
+<li>Protetor Facial (para serviços com esmerilhadeira)</li>
+</ul>
+
+<h3>Organização</h3>
+<ul>
+<li>Mantenha seu conjunto organizado</li>
+<li>Cilindros travados (não utilizar amarrações improvisadas)</li>
+<li>Mangueiras em suporte</li>
+<li>Identifique seu conjunto de oxicorte (Número)</li>
+</ul>
+
+<p><strong>Para transportar cilindros é obrigatório o uso dos capacetes de proteção dos cilindros.</strong></p>
+    `,
+  },
+  {
     id: "DDS-17",
     title: "Prevenção de Quedas em Altura",
     content: `
@@ -717,35 +746,6 @@ export const ddsThemes: DDSTheme[] = [
 </ul>
 
 <p><strong>A ordem e a limpeza são responsabilidade de TODOS. Não espere alguém mandar — faça a sua parte!</strong></p>
-    `,
-  },
-  {
-    id: "DDS-16",
-    title: "Segurança em Operações com Oxi-Corte",
-    content: `
-<p>Confira todos os itens do seu conjunto oxicorte.</p>
-
-<ul>
-<li><strong>Cortinas anti-chama:</strong> Fundamentais para garantir a segurança de todos os colaboradores no local, além de proteger o ambiente de possíveis incêndios</li>
-</ul>
-
-<h3>EPIs Obrigatórios para Oxi-Corte</h3>
-<ul>
-<li>Óculos de Segurança</li>
-<li>Protetor auricular</li>
-<li>Avental e luvas de raspa</li>
-<li>Protetor Facial (para serviços com esmerilhadeira)</li>
-</ul>
-
-<h3>Organização</h3>
-<ul>
-<li>Mantenha seu conjunto organizado</li>
-<li>Cilindros travados (não utilizar amarrações improvisadas)</li>
-<li>Mangueiras em suporte</li>
-<li>Identifique seu conjunto de oxicorte (Número)</li>
-</ul>
-
-<p><strong>Para transportar cilindros é obrigatório o uso dos capacetes de proteção dos cilindros.</strong></p>
     `,
   },
 ];
