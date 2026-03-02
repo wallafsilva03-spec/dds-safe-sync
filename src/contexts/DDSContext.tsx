@@ -5,6 +5,7 @@ interface DDSContextType {
   records: DDSRecord[];
   mesRef: string;
   loading: boolean;
+  lastSignedAt: number;
   refreshRecords: (cracha: string) => Promise<void>;
   addLocalRecord: (record: DDSRecord) => void;
 }
@@ -20,6 +21,7 @@ export const DDSProvider = ({ children }: { children: ReactNode }) => {
   const mesRef = getCurrentMonthRef();
   const [records, setRecords] = useState<DDSRecord[]>([]);
   const [loading, setLoading] = useState(false);
+  const [lastSignedAt, setLastSignedAt] = useState(0);
 
   const refreshRecords = useCallback(async (cracha: string) => {
     setLoading(true);
@@ -35,10 +37,11 @@ export const DDSProvider = ({ children }: { children: ReactNode }) => {
       if (exists) return prev;
       return [...prev, record];
     });
+    setLastSignedAt(Date.now());
   }, []);
 
   return (
-    <DDSContext.Provider value={{ records, mesRef, loading, refreshRecords, addLocalRecord }}>
+    <DDSContext.Provider value={{ records, mesRef, loading, lastSignedAt, refreshRecords, addLocalRecord }}>
       {children}
     </DDSContext.Provider>
   );
