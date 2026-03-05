@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDDS } from "@/contexts/DDSContext";
-import { getDashboard, DashboardData } from "@/services/api";
+import { getDashboard, getUnidades, DashboardData } from "@/services/api";
 import AppHeader from "@/components/AppHeader";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+
+const META_POR_FUNCIONARIO = 25;
 
 function getCurrentMonthRef() {
   const now = new Date();
@@ -26,27 +28,34 @@ const DDSGeral = () => {
   const { user } = useAuth();
   const { lastSignedAt } = useDDS();
   const [mesRef, setMesRef] = useState(getCurrentMonthRef());
+  const [unidade, setUnidade] = useState("TODAS");
+  const [unidades, setUnidades] = useState<string[]>([]);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   const setor = user?.setor || "TODOS";
 
   useEffect(() => {
+    getUnidades().then((list) => setUnidades(list));
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
-    getDashboard(mesRef, setor).then((d) => {
+    getDashboard(mesRef, setor, unidade).then((d) => {
       setData(d);
       setLoading(false);
     });
-  }, [mesRef, setor, lastSignedAt]);
+  }, [mesRef, setor, unidade, lastSignedAt]);
 
   const daysInMonth = getDaysInMonth(mesRef);
   const currentDay = getCurrentDayOfMonth(mesRef);
-  const metaTotal = data ? data.previsto_total : 0;
-  const realizadoTotal = data ? data.realizado_total : 0;
-  const pendenteTotal = data ? data.pendente_total : 0;
+
+  const funcionariosAtivos = data?.funcionarios_ativos ?? 0;
+  const metaTotal = funcionariosAtivos * META_POR_FUNCIONARIO;
+  const realizadoTotal = data?.realizado_total ?? 0;
+  const pendenteTotal = Math.max(0, metaTotal - realizadoTotal);
   const progressPercent = metaTotal > 0 ? Math.min(100, (realizadoTotal / metaTotal) * 100) : 0;
 
-  // Generate daily evolution mock based on realizado spread across days
   const dailyEvolution = Array.from({ length: currentDay }, (_, i) => {
     const day = i + 1;
     const metaDiaria = metaTotal > 0 ? Math.round((metaTotal / daysInMonth) * day) : 0;
@@ -62,7 +71,7 @@ const DDSGeral = () => {
     <div className="min-h-screen flex flex-col">
       <AppHeader />
       <div className="flex-1 p-4 max-w-[700px] w-full mx-auto">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-xl font-extrabold text-foreground">
             📊 DDS Geral — Equipe
           </h2>
@@ -74,6 +83,28 @@ const DDSGeral = () => {
           />
         </div>
 
+        {/* Unidade filter */}
+        <div className="mb-4">
+          <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
+            Unidade
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {["TODAS", ...unidades].map((u) => (
+              <button
+                key={u}
+                onClick={() => setUnidade(u)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors ${
+                  unidade === u
+                    ? "bg-verde text-primary-foreground border-verde"
+                    : "bg-background text-muted-foreground border-border hover:border-verde"
+                }`}
+              >
+                {u}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {loading ? (
           <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
         ) : !data ? (
@@ -83,12 +114,12 @@ const DDSGeral = () => {
             {/* KPI Cards */}
             <div className="grid grid-cols-2 gap-2.5">
               <div className="bg-card border border-border rounded-xl p-4 text-center">
-                <p className="font-display text-3xl font-bold text-verde">{data.funcionarios_ativos}</p>
+                <p className="font-display text-3xl font-bold text-verde">{funcionariosAtivos}</p>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mt-1">Funcionários</p>
               </div>
               <div className="bg-card border border-border rounded-xl p-4 text-center">
-                <p className="font-display text-3xl font-bold text-verde">{data.meta_por_funcionario}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mt-1">Meta (Dia {currentDay})</p>
+                <p className="font-display text-3xl font-bold text-verde">{META_POR_FUNCIONARIO}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mt-1">Meta/Funcionário (dia {currentDay})</p>
               </div>
             </div>
 
@@ -228,7 +259,7 @@ const DDSGeral = () => {
             <div className="bg-card border border-border rounded-xl p-4 text-center">
               <p className="font-display text-3xl font-bold text-verde">{data.concluintes_30_de_30}</p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mt-1">
-                🏆 Concluintes 30/30
+                🏆 Concluintes 25/25
               </p>
             </div>
           </div>
