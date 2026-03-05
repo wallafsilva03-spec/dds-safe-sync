@@ -7,6 +7,7 @@ export interface UserData {
   nome: string;
   funcao: string;
   setor: string;
+  unidade?: string;
   role: string;
 }
 
@@ -103,9 +104,24 @@ export async function signDDS(payload: {
   }
 }
 
-export async function getDashboard(mes_ref: string, setor: string): Promise<DashboardData | null> {
+export async function getUnidades(): Promise<string[]> {
   try {
-    return await apiFetch<DashboardData>({ action: "dashboard", mes_ref, setor });
+    const data = await apiFetch<any>({ action: "unidades" });
+    return data.unidades || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getDashboard(
+  mes_ref: string,
+  setor: string,
+  unidade?: string,
+): Promise<DashboardData | null> {
+  try {
+    const params: Record<string, string> = { action: "dashboard", mes_ref, setor };
+    if (unidade && unidade !== "TODAS") params.unidade = unidade;
+    return await apiFetch<DashboardData>(params);
   } catch {
     return null;
   }

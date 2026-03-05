@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { getDashboard, DashboardData } from "@/services/api";
+import { getDashboard, getUnidades, DashboardData } from "@/services/api";
 import { useDDS } from "@/contexts/DDSContext";
 import AppHeader from "@/components/AppHeader";
+
+const META_POR_FUNCIONARIO = 25;
 
 function getCurrentMonthRef() {
   const now = new Date();
@@ -12,25 +14,39 @@ const Dashboard = () => {
   const { lastSignedAt } = useDDS();
   const [mesRef, setMesRef] = useState(getCurrentMonthRef());
   const [setor, setSetor] = useState("TODOS");
+  const [unidade, setUnidade] = useState("TODAS");
+  const [unidades, setUnidades] = useState<string[]>([]);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    getUnidades().then((list) => setUnidades(list));
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
-    getDashboard(mesRef, setor).then((d) => {
+    getDashboard(mesRef, setor, unidade).then((d) => {
       setData(d);
       setLoading(false);
     });
-  }, [mesRef, setor, lastSignedAt]);
+  }, [mesRef, setor, unidade, lastSignedAt]);
+
+  // Override meta with fixed 25
+  const metaPorFuncionario = META_POR_FUNCIONARIO;
+  const funcionariosAtivos = data?.funcionarios_ativos ?? 0;
+  const previstoTotal = funcionariosAtivos * metaPorFuncionario;
+  const realizadoTotal = data?.realizado_total ?? 0;
+  const pendenteTotal = Math.max(0, previstoTotal - realizadoTotal);
+  const concluintes = data?.concluintes_30_de_30 ?? 0;
 
   const kpis = data
     ? [
-        { label: "Funcionários Ativos", value: data.funcionarios_ativos },
-        { label: "Meta/Funcionário", value: data.meta_por_funcionario },
-        { label: "Previsto Total", value: data.previsto_total },
-        { label: "Realizado Total", value: data.realizado_total },
-        { label: "Pendente Total", value: data.pendente_total },
-        { label: "Concluintes 30/30", value: data.concluintes_30_de_30 },
+        { label: "Funcionários Ativos", value: funcionariosAtivos },
+        { label: "Meta/Funcionário", value: metaPorFuncionario },
+        { label: "Previsto Total", value: previstoTotal },
+        { label: "Realizado Total", value: realizadoTotal },
+        { label: "Pendente Total", value: pendenteTotal },
+        { label: "Concluintes 25/25", value: concluintes },
       ]
     : [];
 
@@ -43,29 +59,53 @@ const Dashboard = () => {
         </h2>
 
         {/* Filters */}
-        <div className="flex gap-3 mb-4">
-          <div className="flex-1">
-            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-              Mês
-            </label>
-            <input
-              type="month"
-              value={mesRef}
-              onChange={(e) => setMesRef(e.target.value)}
-              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground outline-none focus:border-verde transition-colors"
-            />
+        <div className="flex flex-col gap-2.5 mb-4">
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                Mês
+              </label>
+              <input
+                type="month"
+                value={mesRef}
+                onChange={(e) => setMesRef(e.target.value)}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground outline-none focus:border-verde transition-colors"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                Setor
+              </label>
+              <input
+                type="text"
+                value={setor}
+                onChange={(e) => setSetor(e.target.value.toUpperCase())}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground outline-none focus:border-verde transition-colors"
+                placeholder="TODOS"
+              />
+            </div>
           </div>
-          <div className="flex-1">
+
+          {/* Unidade filter */}
+          <div>
             <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-              Setor
+              Unidade
             </label>
-            <input
-              type="text"
-              value={setor}
-              onChange={(e) => setSetor(e.target.value.toUpperCase())}
-              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground outline-none focus:border-verde transition-colors"
-              placeholder="TODOS"
-            />
+            <div className="flex flex-wrap gap-2">
+              {["TODAS", ...unidades].map((u) => (
+                <button
+                  key={u}
+                  onClick={() => setUnidade(u)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors ${
+                    unidade === u
+                      ? "bg-verde text-primary-foreground border-verde"
+                      : "bg-background text-muted-foreground border-border hover:border-verde"
+                  }`}
+                >
+                  {u}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -121,7 +161,7 @@ const Dashboard = () => {
                         <th className="text-left p-2 font-display font-bold text-muted-foreground uppercase tracking-wider">Nome</th>
                         <th className="text-left p-2 font-display font-bold text-muted-foreground uppercase tracking-wider">Função</th>
                         <th className="text-left p-2 font-display font-bold text-muted-foreground uppercase tracking-wider">Setor</th>
-                        <th className="text-center p-2 font-display font-bold text-muted-foreground uppercase tracking-wider">Realizado</th>
+                        <th className="text-center p-2 font-display font-bold text-verde uppercase tracking-wider">Realizado</th>
                         <th className="text-center p-2 font-display font-bold text-destructive uppercase tracking-wider">Faltam</th>
                       </tr>
                     </thead>
