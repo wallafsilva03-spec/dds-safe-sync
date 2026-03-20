@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) setUserState(JSON.parse(stored));
-    } catch {}
+    } catch (_e) { /* ignora erros de parse */ }
     setIsLoading(false);
   }, []);
 

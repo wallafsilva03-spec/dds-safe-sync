@@ -49,7 +49,7 @@ export async function login(
   senha: string,
 ): Promise<{ success: boolean; user?: UserData; error?: string }> {
   try {
-    const data = await apiFetch<any>({ action: "login", cracha, senha });
+    const data = await apiFetch<{ ok?: boolean; success?: boolean; user?: UserData; error?: string }>({ action: "login", cracha, senha });
     if ((data.ok || data.success) && data.user) {
       return { success: true, user: data.user };
     }
@@ -61,7 +61,7 @@ export async function login(
 
 export async function getMyDDS(mes_ref: string, cracha: string): Promise<DDSRecord[]> {
   try {
-    const data = await apiFetch<any>({ action: "mydds", mes_ref, cracha });
+    const data = await apiFetch<{ records?: DDSRecord[] }>({ action: "mydds", mes_ref, cracha });
     return data.records || [];
   } catch {
     return [];
@@ -106,7 +106,7 @@ export async function signDDS(payload: {
 
 export async function getUnidades(): Promise<string[]> {
   try {
-    const data = await apiFetch<any>({ action: "unidades" });
+    const data = await apiFetch<{ unidades?: string[] }>({ action: "unidades" });
     return data.unidades || [];
   } catch {
     return [];
