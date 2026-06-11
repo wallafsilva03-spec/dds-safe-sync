@@ -40,8 +40,18 @@ async function apiFetch<T>(params: Record<string, string>): Promise<T> {
   const url = new URL(API_URL);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`Erro na API: ${res.status}`);
-  return res.json();
+  if (!res.ok) {
+    console.error(`[API] HTTP ${res.status} em action=${params.action}`);
+    throw new Error(`Erro na API: ${res.status}`);
+  }
+  const json = await res.json();
+  console.log(`[API] ${params.action} resposta:`, json);
+  // Desempacota formatos comuns: {ok, data}, {success, data}, {result}
+  if (json && typeof json === "object") {
+    if (json.data && typeof json.data === "object") return json.data as T;
+    if (json.result && typeof json.result === "object") return json.result as T;
+  }
+  return json as T;
 }
 
 export async function login(
