@@ -131,8 +131,14 @@ export async function getDashboard(
   try {
     const params: Record<string, string> = { action: "dashboard", mes_ref, setor };
     if (unidade && unidade !== "TODAS") params.unidade = unidade;
-    return await apiFetch<DashboardData>(params);
-  } catch {
+    const data = await apiFetch<DashboardData>(params);
+    if (!data || typeof data !== "object") {
+      console.error("[API] dashboard retornou vazio/invalido", data);
+      return null;
+    }
+    return data;
+  } catch (e) {
+    console.error("[API] getDashboard erro:", e);
     return null;
   }
 }
