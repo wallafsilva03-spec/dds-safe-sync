@@ -41,7 +41,7 @@ const DDSGeral = () => {
 
   useEffect(() => {
     setLoading(true);
-    getDashboard(mesRef, setor, unidade).then((d) => {
+    getDashboard(mesRef, setor, unidade, user?.cracha, user?.role).then((d) => {
       setData(d);
       setLoading(false);
     });

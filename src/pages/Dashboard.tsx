@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getDashboard, getUnidades, DashboardData } from "@/services/api";
 import { useDDS } from "@/contexts/DDSContext";
+import { useAuth } from "@/contexts/AuthContext";
 import AppHeader from "@/components/AppHeader";
 
 const META_POR_FUNCIONARIO = 25;
@@ -11,6 +12,7 @@ function getCurrentMonthRef() {
 }
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const { lastSignedAt } = useDDS();
   const [mesRef, setMesRef] = useState(getCurrentMonthRef());
   const [setor, setSetor] = useState("TODOS");
@@ -25,7 +27,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     setLoading(true);
-    getDashboard(mesRef, setor, unidade).then((d) => {
+    getDashboard(mesRef, setor, unidade, user?.cracha, user?.role).then((d) => {
       setData(d);
       setLoading(false);
     });
