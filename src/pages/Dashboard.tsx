@@ -6,6 +6,7 @@ import AppHeader from "@/components/AppHeader";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend,
+  Area, RadialBarChart, RadialBar, PolarAngleAxis, ComposedChart,
 } from "recharts";
 
 const META_POR_FUNCIONARIO = 25;
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const [setores, setSetores] = useState<string[]>([]);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     getUnidades().then((list) => setUnidades(list));
@@ -89,6 +91,21 @@ const Dashboard = () => {
     { name: "Concluintes", value: concluintes },
     { name: "Abaixo da Meta", value: Math.max(0, funcionariosAtivos - concluintes) },
   ];
+
+  // Gauge (velocímetro) — % de conclusão geral
+  const gaugeData = [{ name: "Conclusão", value: Math.round(progressPercent), fill: "hsl(var(--verde))" }];
+
+  // Filtro de busca na lista de funcionários abaixo da meta
+  const termo = busca.trim().toLowerCase();
+  const abaixoFiltrado = (data?.abaixo_da_meta ?? []).filter((r) => {
+    if (!termo) return true;
+    return (
+      String(r.nome || "").toLowerCase().includes(termo) ||
+      String(r.cracha || "").toLowerCase().includes(termo) ||
+      String(r.funcao || "").toLowerCase().includes(termo) ||
+      String(r.setor || "").toLowerCase().includes(termo)
+    );
+  });
 
   const kpis = [
     { label: "Funcionários", value: funcionariosAtivos },
@@ -202,15 +219,50 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Gráfico 1 — Evolução diária (linha) */}
+            {/* Gauge — Velocímetro de conclusão geral */}
+            <div className="bg-card border border-border rounded-xl p-4">
+              <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                🎯 Conclusão Geral do Mês
+              </h3>
+              <div className="h-[180px] relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    innerRadius="70%"
+                    outerRadius="100%"
+                    data={gaugeData}
+                    startAngle={210}
+                    endAngle={-30}
+                  >
+                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                    <RadialBar background dataKey="value" cornerRadius={12} angleAxisId={0} />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="font-display text-4xl font-extrabold text-verde">
+                    {Math.round(progressPercent)}%
+                  </span>
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                    {realizadoTotal} de {previstoTotal}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Gráfico 1 — Evolução acumulada (área) */}
             {dailyEvolution.length > 0 && (
               <div className="bg-card border border-border rounded-xl p-4">
                 <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  📈 Evolução Diária — Meta vs Realizado
+                  📈 Evolução Acumulada — Meta vs Realizado
                 </h3>
                 <div className="h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={dailyEvolution}>
+                    <ComposedChart data={dailyEvolution}>
+                      <defs>
+                        <linearGradient id="gReal" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--verde))" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="hsl(var(--verde))" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis
                         dataKey="dia"
@@ -228,8 +280,8 @@ const Dashboard = () => {
                       />
                       <Legend wrapperStyle={{ fontSize: "11px" }} />
                       <Line type="monotone" dataKey="meta" stroke="hsl(var(--muted-foreground))" strokeDasharray="5 5" strokeWidth={2} dot={false} name="Meta prevista" />
-                      <Line type="monotone" dataKey="realizado" stroke="hsl(var(--verde))" strokeWidth={2.5} dot={false} name="Realizado" />
-                    </LineChart>
+                      <Area type="monotone" dataKey="realizado" stroke="hsl(var(--verde))" strokeWidth={2.5} fill="url(#gReal)" name="Realizado" />
+                    </ComposedChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -307,7 +359,17 @@ const Dashboard = () => {
             {data.abaixo_da_meta && data.abaixo_da_meta.length > 0 && (
               <div className="bg-card border border-border rounded-xl overflow-hidden">
                 <div className="bg-destructive/90 px-3.5 py-2.5 font-display text-[13px] font-bold tracking-wider uppercase text-destructive-foreground">
-                  ⚠️ Abaixo da Meta ({data.abaixo_da_meta.length})
+                  ⚠️ Abaixo da Meta ({abaixoFiltrado.length}{busca ? ` de ${data.abaixo_da_meta.length}` : ""})
+                </div>
+                {/* Campo de busca */}
+                <div className="p-3 border-b border-border">
+                  <input
+                    type="text"
+                    value={busca}
+                    onChange={(e) => setBusca(e.target.value)}
+                    placeholder="🔍 Buscar por nome, crachá, função ou setor..."
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground outline-none focus:border-verde transition-colors"
+                  />
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
@@ -321,15 +383,23 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.abaixo_da_meta.map((row) => (
-                        <tr key={row.cracha} className="border-b border-background last:border-0">
-                          <td className="p-2.5 text-foreground font-bold">{row.nome}</td>
-                          <td className="p-2.5 text-muted-foreground">{row.funcao}</td>
-                          <td className="p-2.5 text-muted-foreground">{row.setor}</td>
-                          <td className="p-2.5 text-center text-verde font-bold">{row.realizado_no_mes}</td>
-                          <td className="p-2.5 text-center text-destructive font-bold">{row.faltam_no_mes}</td>
+                      {abaixoFiltrado.length > 0 ? (
+                        abaixoFiltrado.map((row) => (
+                          <tr key={row.cracha} className="border-b border-background last:border-0">
+                            <td className="p-2.5 text-foreground font-bold">{row.nome}</td>
+                            <td className="p-2.5 text-muted-foreground">{row.funcao}</td>
+                            <td className="p-2.5 text-muted-foreground">{row.setor}</td>
+                            <td className="p-2.5 text-center text-verde font-bold">{row.realizado_no_mes}</td>
+                            <td className="p-2.5 text-center text-destructive font-bold">{row.faltam_no_mes}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                            Nenhum funcionário encontrado para "{busca}".
+                          </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
