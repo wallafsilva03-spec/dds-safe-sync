@@ -7,13 +7,13 @@ import { useEffect, useState } from "react";
  * ficam ocultos para não atrapalhar a navegação.
  */
 
-interface Slogan {
+export interface Slogan {
   emoji: string;
   titulo: string;
   texto: string;
 }
 
-const SLOGANS: Slogan[] = [
+export const SLOGANS: Slogan[] = [
   { emoji: "❤️", titulo: "Nossa maior prioridade é VOCÊ", texto: "Nenhuma tarefa é tão urgente que não possa ser feita com segurança." },
   { emoji: "🏠", titulo: "Sua família espera você em casa", texto: "Trabalhe com atenção. O cuidado de hoje é o reencontro de amanhã." },
   { emoji: "🎯", titulo: "Meta: Zero Acidentes", texto: "Cada dia sem acidentes é uma vitória de toda a equipe." },

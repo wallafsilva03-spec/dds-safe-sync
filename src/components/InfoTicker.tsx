@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { SLOGANS } from "./SafetyAside";
 
 /**
  * Letreiro fixo no rodapé com clima de Ribeirão Preto-SP e informativos
@@ -119,8 +120,14 @@ const InfoTicker = () => {
   const base = dayOfYear() % INFORMATIVOS.length;
   const doDia = Array.from({ length: 5 }, (_, i) => INFORMATIVOS[(base + i) % INFORMATIVOS.length]);
 
+  // Slogans de campanha que também giram diariamente (mesma lista dos
+  // painéis laterais), para aparecerem no letreiro inclusive no mobile.
+  const baseSlogan = dayOfYear() % SLOGANS.length;
+  const slogansDoDia = Array.from({ length: 3 }, (_, i) => SLOGANS[(baseSlogan + i) % SLOGANS.length]);
+
   const itens: string[] = [];
   itens.push(`📅 ${dataHoje.charAt(0).toUpperCase() + dataHoje.slice(1)}`);
+  slogansDoDia.forEach((s) => itens.push(`${s.emoji} ${s.titulo}`));
   doDia.forEach((m) => itens.push(`🦺 ${m}`));
 
   // Duplica o conteúdo para o efeito de rolagem contínua (translateX -50%).
