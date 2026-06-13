@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DDSProvider } from "@/contexts/DDSContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import InfoTicker from "@/components/InfoTicker";
+import { useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
 import DDSList from "./pages/DDSList";
@@ -15,6 +17,12 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+// Mostra o letreiro apenas para usuários autenticados.
+const GlobalTicker = () => {
+  const { user } = useAuth();
+  return user ? <InfoTicker /> : null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -69,6 +77,7 @@ const App = () => (
               />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <GlobalTicker />
           </BrowserRouter>
         </DDSProvider>
       </AuthProvider>
