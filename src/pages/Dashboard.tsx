@@ -40,6 +40,7 @@ const Dashboard = () => {
   const [setores, setSetores] = useState<string[]>([]);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     getUnidades().then((list) => setUnidades(list));
@@ -94,23 +95,17 @@ const Dashboard = () => {
   // Gauge (velocímetro) — % de conclusão geral
   const gaugeData = [{ name: "Conclusão", value: Math.round(progressPercent), fill: "hsl(var(--verde))" }];
 
-  // Top 8 que mais precisam assinar (maior pendência)
-  const topFaltam = (data?.abaixo_da_meta ?? [])
-    .slice()
-    .sort((a, b) => b.faltam_no_mes - a.faltam_no_mes)
-    .slice(0, 8)
-    .map((r) => ({ nome: r.nome?.split(" ")[0] || r.cracha, faltam: r.faltam_no_mes }));
-
-  // Pendência agrupada por função
-  const porFuncaoMap: Record<string, number> = {};
-  (data?.abaixo_da_meta ?? []).forEach((r) => {
-    const f = r.funcao || "—";
-    porFuncaoMap[f] = (porFuncaoMap[f] || 0) + 1;
+  // Filtro de busca na lista de funcionários abaixo da meta
+  const termo = busca.trim().toLowerCase();
+  const abaixoFiltrado = (data?.abaixo_da_meta ?? []).filter((r) => {
+    if (!termo) return true;
+    return (
+      String(r.nome || "").toLowerCase().includes(termo) ||
+      String(r.cracha || "").toLowerCase().includes(termo) ||
+      String(r.funcao || "").toLowerCase().includes(termo) ||
+      String(r.setor || "").toLowerCase().includes(termo)
+    );
   });
-  const porFuncao = Object.entries(porFuncaoMap)
-    .map(([funcao, total]) => ({ funcao, total }))
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 6);
 
   const kpis = [
     { label: "Funcionários", value: funcionariosAtivos },
@@ -360,69 +355,21 @@ const Dashboard = () => {
               </div>
             )}
 
-            {/* Gráfico 4 — Top que mais precisam assinar (ranking) */}
-            {topFaltam.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4">
-                <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  🚨 Top Pendências — Quem Mais Precisa Assinar
-                </h3>
-                <div className="h-[220px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topFaltam} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                      <YAxis dataKey="nome" type="category" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={80} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
-                          fontSize: "12px",
-                        }}
-                      />
-                      <Bar dataKey="faltam" fill="hsl(var(--destructive))" radius={[0, 6, 6, 0]} name="Faltam" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            )}
-
-            {/* Gráfico 5 — Pendência por função */}
-            {porFuncao.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4">
-                <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  👷 Funcionários Abaixo da Meta por Função
-                </h3>
-                <div className="h-[200px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={porFuncao}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="funcao" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} interval={0} angle={-15} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
-                          fontSize: "12px",
-                        }}
-                      />
-                      <Bar dataKey="total" radius={[6, 6, 0, 0]} name="Pessoas">
-                        {porFuncao.map((_, index) => (
-                          <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            )}
-
             {/* Tabela — Abaixo da Meta */}
             {data.abaixo_da_meta && data.abaixo_da_meta.length > 0 && (
               <div className="bg-card border border-border rounded-xl overflow-hidden">
                 <div className="bg-destructive/90 px-3.5 py-2.5 font-display text-[13px] font-bold tracking-wider uppercase text-destructive-foreground">
-                  ⚠️ Abaixo da Meta ({data.abaixo_da_meta.length})
+                  ⚠️ Abaixo da Meta ({abaixoFiltrado.length}{busca ? ` de ${data.abaixo_da_meta.length}` : ""})
+                </div>
+                {/* Campo de busca */}
+                <div className="p-3 border-b border-border">
+                  <input
+                    type="text"
+                    value={busca}
+                    onChange={(e) => setBusca(e.target.value)}
+                    placeholder="🔍 Buscar por nome, crachá, função ou setor..."
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground outline-none focus:border-verde transition-colors"
+                  />
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
@@ -436,15 +383,23 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.abaixo_da_meta.map((row) => (
-                        <tr key={row.cracha} className="border-b border-background last:border-0">
-                          <td className="p-2.5 text-foreground font-bold">{row.nome}</td>
-                          <td className="p-2.5 text-muted-foreground">{row.funcao}</td>
-                          <td className="p-2.5 text-muted-foreground">{row.setor}</td>
-                          <td className="p-2.5 text-center text-verde font-bold">{row.realizado_no_mes}</td>
-                          <td className="p-2.5 text-center text-destructive font-bold">{row.faltam_no_mes}</td>
+                      {abaixoFiltrado.length > 0 ? (
+                        abaixoFiltrado.map((row) => (
+                          <tr key={row.cracha} className="border-b border-background last:border-0">
+                            <td className="p-2.5 text-foreground font-bold">{row.nome}</td>
+                            <td className="p-2.5 text-muted-foreground">{row.funcao}</td>
+                            <td className="p-2.5 text-muted-foreground">{row.setor}</td>
+                            <td className="p-2.5 text-center text-verde font-bold">{row.realizado_no_mes}</td>
+                            <td className="p-2.5 text-center text-destructive font-bold">{row.faltam_no_mes}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                            Nenhum funcionário encontrado para "{busca}".
+                          </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
