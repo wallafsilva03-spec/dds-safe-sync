@@ -6,6 +6,7 @@ import AppHeader from "@/components/AppHeader";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend,
+  Area, RadialBarChart, RadialBar, PolarAngleAxis, ComposedChart,
 } from "recharts";
 
 const META_POR_FUNCIONARIO = 25;
@@ -89,6 +90,27 @@ const Dashboard = () => {
     { name: "Concluintes", value: concluintes },
     { name: "Abaixo da Meta", value: Math.max(0, funcionariosAtivos - concluintes) },
   ];
+
+  // Gauge (velocímetro) — % de conclusão geral
+  const gaugeData = [{ name: "Conclusão", value: Math.round(progressPercent), fill: "hsl(var(--verde))" }];
+
+  // Top 8 que mais precisam assinar (maior pendência)
+  const topFaltam = (data?.abaixo_da_meta ?? [])
+    .slice()
+    .sort((a, b) => b.faltam_no_mes - a.faltam_no_mes)
+    .slice(0, 8)
+    .map((r) => ({ nome: r.nome?.split(" ")[0] || r.cracha, faltam: r.faltam_no_mes }));
+
+  // Pendência agrupada por função
+  const porFuncaoMap: Record<string, number> = {};
+  (data?.abaixo_da_meta ?? []).forEach((r) => {
+    const f = r.funcao || "—";
+    porFuncaoMap[f] = (porFuncaoMap[f] || 0) + 1;
+  });
+  const porFuncao = Object.entries(porFuncaoMap)
+    .map(([funcao, total]) => ({ funcao, total }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 6);
 
   const kpis = [
     { label: "Funcionários", value: funcionariosAtivos },
@@ -202,15 +224,50 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Gráfico 1 — Evolução diária (linha) */}
+            {/* Gauge — Velocímetro de conclusão geral */}
+            <div className="bg-card border border-border rounded-xl p-4">
+              <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                🎯 Conclusão Geral do Mês
+              </h3>
+              <div className="h-[180px] relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    innerRadius="70%"
+                    outerRadius="100%"
+                    data={gaugeData}
+                    startAngle={210}
+                    endAngle={-30}
+                  >
+                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                    <RadialBar background dataKey="value" cornerRadius={12} angleAxisId={0} />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="font-display text-4xl font-extrabold text-verde">
+                    {Math.round(progressPercent)}%
+                  </span>
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                    {realizadoTotal} de {previstoTotal}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Gráfico 1 — Evolução acumulada (área) */}
             {dailyEvolution.length > 0 && (
               <div className="bg-card border border-border rounded-xl p-4">
                 <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  📈 Evolução Diária — Meta vs Realizado
+                  📈 Evolução Acumulada — Meta vs Realizado
                 </h3>
                 <div className="h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={dailyEvolution}>
+                    <ComposedChart data={dailyEvolution}>
+                      <defs>
+                        <linearGradient id="gReal" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--verde))" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="hsl(var(--verde))" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis
                         dataKey="dia"
@@ -228,8 +285,8 @@ const Dashboard = () => {
                       />
                       <Legend wrapperStyle={{ fontSize: "11px" }} />
                       <Line type="monotone" dataKey="meta" stroke="hsl(var(--muted-foreground))" strokeDasharray="5 5" strokeWidth={2} dot={false} name="Meta prevista" />
-                      <Line type="monotone" dataKey="realizado" stroke="hsl(var(--verde))" strokeWidth={2.5} dot={false} name="Realizado" />
-                    </LineChart>
+                      <Area type="monotone" dataKey="realizado" stroke="hsl(var(--verde))" strokeWidth={2.5} fill="url(#gReal)" name="Realizado" />
+                    </ComposedChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -298,6 +355,64 @@ const Dashboard = () => {
                       />
                       <Legend wrapperStyle={{ fontSize: "11px" }} />
                     </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
+            {/* Gráfico 4 — Top que mais precisam assinar (ranking) */}
+            {topFaltam.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-4">
+                <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                  🚨 Top Pendências — Quem Mais Precisa Assinar
+                </h3>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={topFaltam} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                      <YAxis dataKey="nome" type="category" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={80} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--card))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "8px",
+                          fontSize: "12px",
+                        }}
+                      />
+                      <Bar dataKey="faltam" fill="hsl(var(--destructive))" radius={[0, 6, 6, 0]} name="Faltam" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
+            {/* Gráfico 5 — Pendência por função */}
+            {porFuncao.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-4">
+                <h3 className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                  👷 Funcionários Abaixo da Meta por Função
+                </h3>
+                <div className="h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={porFuncao}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="funcao" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} interval={0} angle={-15} textAnchor="end" height={50} />
+                      <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--card))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "8px",
+                          fontSize: "12px",
+                        }}
+                      />
+                      <Bar dataKey="total" radius={[6, 6, 0, 0]} name="Pessoas">
+                        {porFuncao.map((_, index) => (
+                          <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
