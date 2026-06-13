@@ -59,11 +59,19 @@ export async function login(
   senha: string,
 ): Promise<{ success: boolean; user?: UserData; error?: string }> {
   try {
-    const data = await apiFetch<any>({ action: "login", cracha, senha });
-    if ((data.ok || data.success) && data.user) {
-      return { success: true, user: data.user };
-    }
-    return { success: false, error: data.error || "Crachá ou senha inválidos." };
+    const url = new URL(API_URL);
+    url.searchParams.set("action", "login");
+    url.searchParams.set("cracha", cracha);
+    url.searchParams.set("senha", senha);
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    console.log("[API] login resposta:", json);
+    // Suporta { success, user }, { ok, user }, { data: { user } }, { result: { user } }
+    const payload = (json?.data ?? json?.result ?? json) as any;
+    const user: UserData | undefined = payload?.user;
+    if (user) return { success: true, user };
+    return { success: false, error: payload?.error || json?.error || "Crachá ou senha inválidos." };
   } catch {
     return { success: false, error: "Erro de conexão com o servidor." };
   }
@@ -127,10 +135,14 @@ export async function getDashboard(
   mes_ref: string,
   setor: string,
   unidade?: string,
+  cracha?: string,
+  role?: string,
 ): Promise<DashboardData | null> {
   try {
     const params: Record<string, string> = { action: "dashboard", mes_ref, setor };
     if (unidade && unidade !== "TODAS") params.unidade = unidade;
+    if (cracha) params.cracha = cracha;
+    if (role) params.role = role;
     const data = await apiFetch<DashboardData>(params);
     if (!data || typeof data !== "object") {
       console.error("[API] dashboard retornou vazio/invalido", data);

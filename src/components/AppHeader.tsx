@@ -17,11 +17,7 @@ const AppHeader = () => {
     { path: "/meus-dds", label: "Meus DDS" },
   ];
 
-  if (user?.role === "admin" || user?.role === "admin") {
-    navItems.push({ path: "/dds-geral", label: "DDS Geral" });
-  }
-
-  if (user?.role === "admin") {
+  if (user?.role === "admin" || user?.role === "supervisor") {
     navItems.push({ path: "/dashboard", label: "Dashboard" });
   }
 
