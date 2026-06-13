@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
  * em localStorage por data) usando a API gratuita Open-Meteo (sem chave).
  */
 
-const RIBEIRAO = { lat: -21.1775, lon: -47.8103, nome: "Ribeirão Preto-SP" };
+const CIDADE = { lat: -20.7722, lon: -49.7128, nome: "Monte Aprazível-SP" };
 
 // Mensagens de segurança / informativos — giram conforme o dia do ano.
 const INFORMATIVOS = [
@@ -72,7 +72,7 @@ const InfoTicker = () => {
   }, []);
 
   useEffect(() => {
-    const cacheKey = "dss-weather";
+    const cacheKey = "dss-weather-v2";
     try {
       const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
       if (cached && cached.date === todayKey() && cached.data) {
@@ -84,8 +84,8 @@ const InfoTicker = () => {
     }
 
     const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${RIBEIRAO.lat}` +
-      `&longitude=${RIBEIRAO.lon}&current=temperature_2m,weather_code` +
+      `https://api.open-meteo.com/v1/forecast?latitude=${CIDADE.lat}` +
+      `&longitude=${CIDADE.lon}&current=temperature_2m,weather_code` +
       `&daily=temperature_2m_max,temperature_2m_min&timezone=America/Sao_Paulo`;
 
     fetch(url)
@@ -121,11 +121,6 @@ const InfoTicker = () => {
 
   const itens: string[] = [];
   itens.push(`📅 ${dataHoje.charAt(0).toUpperCase() + dataHoje.slice(1)}`);
-  if (weather) {
-    itens.push(
-      `${weather.emoji} ${RIBEIRAO.nome}: ${weather.temp}°C, ${weather.desc} (máx ${weather.max}° / mín ${weather.min}°)`,
-    );
-  }
   doDia.forEach((m) => itens.push(`🦺 ${m}`));
 
   // Duplica o conteúdo para o efeito de rolagem contínua (translateX -50%).
@@ -133,11 +128,31 @@ const InfoTicker = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-header border-t border-white/10 overflow-hidden">
-      <div className="flex items-center">
-        <span className="flex-shrink-0 bg-verde text-primary-foreground font-display text-[11px] font-bold uppercase tracking-wider px-3 py-2">
+      <div className="flex items-stretch">
+        <span className="flex-shrink-0 bg-verde text-primary-foreground font-display text-[11px] font-bold uppercase tracking-wider px-3 flex items-center">
           📢 Informativo
         </span>
-        <div className="relative flex-1 overflow-hidden">
+
+        {/* Clima destacado ao lado */}
+        {weather && (
+          <div className="flex-shrink-0 flex items-center gap-2 px-3 bg-white/10 border-x border-white/15">
+            <span className="text-xl leading-none">{weather.emoji}</span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-display text-base font-extrabold text-primary-foreground">
+                {weather.temp}°C
+              </span>
+              <span className="text-[9px] text-primary-foreground/70 uppercase tracking-wide font-bold">
+                {CIDADE.nome.replace("-SP", "")}
+              </span>
+            </div>
+            <div className="hidden sm:flex flex-col leading-tight text-[10px] text-primary-foreground/80 font-bold border-l border-white/15 pl-2">
+              <span>↑ {weather.max}°</span>
+              <span>↓ {weather.min}°</span>
+            </div>
+          </div>
+        )}
+
+        <div className="relative flex-1 overflow-hidden flex items-center">
           <div className="inline-flex whitespace-nowrap animate-marquee py-2">
             <span className="text-[12px] text-primary-foreground/90 px-4">{conteudo}</span>
             <span className="text-[12px] text-primary-foreground/90 px-4" aria-hidden="true">

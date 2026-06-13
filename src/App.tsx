@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DDSProvider } from "@/contexts/DDSContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import InfoTicker from "@/components/InfoTicker";
+import SafetyAside from "@/components/SafetyAside";
 import { useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
@@ -21,7 +22,13 @@ const queryClient = new QueryClient();
 // Mostra o letreiro apenas para usuários autenticados.
 const GlobalTicker = () => {
   const { user } = useAuth();
-  return user ? <InfoTicker /> : null;
+  if (!user) return null;
+  return (
+    <>
+      <SafetyAside />
+      <InfoTicker />
+    </>
+  );
 };
 
 const App = () => (
